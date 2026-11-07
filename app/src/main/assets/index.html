@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Уроки Садии</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Pangolin&display=swap">
+<style>
+/* Layout: школьная тетрадь в клетку — одна колонка, поля слева красной линией, нижняя панель вкладок */
+:root{
+ --paper:#F7F9FC;--grid:#E3EAF4;--text:#1A2233;--muted:#5A6479;--ink:#2350B8;--margin:#E05A4F;
+ --card:#FFFFFF;--line:#D6DEEA;--sun:#E9A800;--ok:#178A54;--okbg:#E3F5EA;--bad:#C8461C;--badbg:#FDEBE3;
+ --math:#2459C9;--eng:#0B8A7A;--logic:#8A3FC0;--read:#C9571A;--test:#A87400;
+ --display:'Pangolin','Comic Sans MS','Chalkboard SE',ui-rounded,system-ui,sans-serif;
+ --body:'Golos Text',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+ --paper:#14201B;--grid:#1C2B24;--text:#E7EFEA;--muted:#9DB0A6;--ink:#8DB4FF;--margin:#F08A7E;
+ --card:#1B2A23;--line:#2C3F36;--sun:#F6C744;--ok:#4CD68A;--okbg:#173A2A;--bad:#FF9A6B;--badbg:#3D2219;
+ --math:#86A9FF;--eng:#3FD1C0;--logic:#CE9BFF;--read:#FFA567;--test:#E8C24F;color-scheme:dark}}
+:root[data-theme="dark"]{
+ --paper:#14201B;--grid:#1C2B24;--text:#E7EFEA;--muted:#9DB0A6;--ink:#8DB4FF;--margin:#F08A7E;
+ --card:#1B2A23;--line:#2C3F36;--sun:#F6C744;--ok:#4CD68A;--okbg:#173A2A;--bad:#FF9A6B;--badbg:#3D2219;
+ --math:#86A9FF;--eng:#3FD1C0;--logic:#CE9BFF;--read:#FFA567;--test:#E8C24F;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;color:var(--text);font:16px/1.5 var(--body);-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:580px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 112px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.s-math{--c:var(--math)}.s-eng{--c:var(--eng)}.s-logic{--c:var(--logic)}.s-read{--c:var(--read)}.s-test{--c:var(--test)}
+
+/* Шапка дня */
+.hero{border-left:2px solid var(--margin);padding:4px 0 4px 14px;margin:4px 0 22px;display:grid;gap:4px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h1{font:400 34px/1.15 var(--display);color:var(--ink);margin:0;text-wrap:balance}
+h2{font:400 24px/1.2 var(--display);color:var(--ink);margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:0}
+.timebar{margin-top:10px;display:grid;gap:6px}
+.timebar .track{height:10px;border-radius:6px;background:var(--line);overflow:hidden}
+.timebar .fill{height:100%;background:var(--sun);border-radius:6px}
+.timebar small{color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Уроки дня */
+.list{display:grid;gap:12px}
+.tile{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.tile:active{transform:scale(.99)}
+.badge{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:var(--card);font:400 24px/1 var(--display)}
+.tname{display:block;font-weight:600;font-size:17px}
+.ttopic{display:block;color:var(--muted);font-size:14px;line-height:1.35}
+.tmeta{text-align:right;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.go{display:inline-block;margin-top:4px;padding:4px 12px;border-radius:20px;background:var(--c);color:var(--card);font-weight:600;font-size:14px}
+.stars{color:var(--sun);font-size:18px;letter-spacing:1px}
+.tile.done{background:color-mix(in srgb,var(--card) 88%,var(--c))}
+.note{background:var(--card);border:1px dashed var(--line);border-radius:16px;padding:18px;display:grid;gap:8px}
+.note p{margin:0}
+.section{margin-top:28px;display:grid;gap:10px}
+.label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:20px;padding:6px 14px;font-size:14px}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
+
+/* Урок */
+.lbar{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:12px;margin-bottom:18px}
+.x{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);font-size:24px;line-height:1}
+.dots{display:flex;gap:4px}
+.dots i{flex:1;height:8px;border-radius:4px;background:var(--line)}
+.dots i.ok{background:var(--ok)}.dots i.half{background:var(--sun)}.dots i.no{background:var(--bad)}.dots i.now{background:var(--c)}
+.lnum{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 18px;display:grid;gap:16px}
+.qhead{display:flex;align-items:center;gap:10px;color:var(--c);font-weight:600;font-size:14px}
+.qhead .badge{width:30px;height:30px;font-size:15px}
+.qtext{font-size:19px;font-weight:500;margin:0;text-wrap:pretty}
+.passage{background:color-mix(in srgb,var(--card) 92%,var(--c));border-radius:12px;padding:14px;font-size:17px;line-height:1.6}
+.passage b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.big{font:400 38px/1.25 var(--display);text-align:center;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;padding:6px 0}
+.big.long{font-size:26px}
+.big.pre{white-space:pre-line;font-size:24px;text-align:left;line-height:1.6;font-family:var(--body);font-weight:500}
+.big.emo{font-size:44px;line-height:1.3}
+.sayrow{display:flex;justify-content:center}
+.say{border:1px solid var(--line);background:var(--paper);border-radius:24px;padding:8px 16px;font-size:16px}
+.listen{display:grid;place-items:center}
+.listen button{width:96px;height:96px;border-radius:50%;border:0;background:var(--c);color:var(--card);font-size:40px}
+.answer{min-height:64px;border:2px solid var(--line);border-radius:14px;display:grid;place-items:center;font:400 40px/1 var(--display);font-variant-numeric:tabular-nums;color:var(--ink)}
+.answer.empty{color:var(--line)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pad button{height:58px;border-radius:14px;border:1px solid var(--line);background:var(--paper);font:400 28px/1 var(--display)}
+.pad .ok{background:var(--ink);border-color:var(--ink);color:var(--card);font:600 17px/1 var(--body)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.col{grid-template-columns:1fr}
+.opts button{min-height:58px;border-radius:14px;border:2px solid var(--line);background:var(--paper);padding:10px 12px;font-size:18px;font-weight:500;line-height:1.3}
+.opts.emo button{font-size:38px}
+.opts.sym button{font:400 34px/1 var(--display)}
+.opts button.right{border-color:var(--ok);background:var(--okbg)}
+.opts button.wrong{border-color:var(--bad);background:var(--badbg);opacity:.75}
+.fb{border-radius:14px;padding:12px 14px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.fb.ok{background:var(--okbg);color:var(--ok)}.fb.bad{background:var(--badbg);color:var(--bad)}
+.next{border:0;border-radius:12px;background:var(--ink);color:var(--card);padding:10px 20px;font-weight:600}
+.rule{display:grid;gap:14px}
+.rule p{margin:0;font-size:18px;line-height:1.6}
+.cta{border:0;border-radius:16px;background:var(--c,var(--ink));color:var(--card);padding:16px;font-size:18px;font-weight:600;width:100%}
+.ghost{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:12px 16px;font-weight:500}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.shake{animation:none}}
+.result{text-align:center;display:grid;gap:14px;justify-items:center;padding-top:20px}
+.result .bigstars{font-size:56px;color:var(--sun);letter-spacing:6px}
+.confirm{display:grid;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+
+/* План */
+.month{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.mhead{width:100%;text-align:left;background:none;border:0;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:4px 12px}
+.mname{font:400 20px/1.2 var(--display);color:var(--ink)}
+.mtop{grid-column:1/-1;color:var(--muted);font-size:14px;line-height:1.4}
+.mprog{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);align-self:center}
+.cal{padding:0 12px 14px;display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.cal .wd{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:center}
+.cal button{aspect-ratio:1;max-width:100%;border-radius:10px;border:1px solid var(--line);background:var(--paper);font-variant-numeric:tabular-nums;font-weight:600;font-size:15px;display:grid;place-items:center;padding:0;position:relative}
+.cal button.full{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.cal button.part{background:color-mix(in srgb,var(--paper) 70%,var(--sun));border-color:var(--sun)}
+.cal button.miss{border-color:var(--bad);color:var(--bad)}
+.cal button.today{outline:3px solid var(--ink);outline-offset:1px}
+.cal button.sat{font-style:italic}
+
+/* Успехи */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 12px}
+.kpi b{display:block;font:400 30px/1.1 var(--display);color:var(--ink);font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--muted)}
+.bars{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px}
+.bars .cols{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;align-items:end;height:110px;border-bottom:1px solid var(--line)}
+.bars .cols i{display:block;background:var(--sun);border-radius:4px 4px 0 0;min-height:2px}
+.bars .lab{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;font-size:10px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.subj{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.subj .badge{width:30px;height:30px;font-size:15px}
+.meter{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin-top:4px}
+.meter i{display:block;height:100%;background:var(--c)}
+.subj small{color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* Родителям */
+.form{display:grid;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.form label{display:grid;gap:6px;font-weight:500}
+.form input,.form select{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--text)}
+.tbl{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:16px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+.info{background:var(--card);border:1px solid var(--line);border-left:2px solid var(--margin);border-radius:4px 16px 16px 4px;padding:16px;display:grid;gap:8px}
+.info p{margin:0}
+.muted{color:var(--muted)}
+
+/* Нижние вкладки */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));z-index:5}
+.tabs button{border:0;background:none;padding:6px 4px;display:grid;justify-items:center;gap:2px;font-size:12px;color:var(--muted);border-radius:12px}
+.tabs button span{font:400 22px/1 var(--display)}
+.tabs button.on{color:var(--ink);background:color-mix(in srgb,var(--card) 85%,var(--ink))}
+.tabs.hide{display:none}
+</style>
+
+<div class="wrap"><main id="view" aria-live="polite"></main></div>
+<nav class="tabs" id="tabs">
+ <button data-tab="day" class="on"><span>☼</span>Сегодня</button>
+ <button data-tab="plan"><span>▦</span>План</button>
+ <button data-tab="stats"><span>★</span>Успехи</button>
+ <button data-tab="parent"><span>⚙</span>Родителям</button>
+</nav>
+
+<script>
+/* ===== Учебная программа: данные и генераторы заданий ===== */
+const MONTHS=['Сентябрь','Октябрь','Ноябрь','Декабрь','Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август'];
+const MON_GEN=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const WD=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+
+function hashStr(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return (h^h>>>16)>>>0}
+function RNG(seed){let a=hashStr(seed);const f=()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+ return {f,int:(lo,hi)=>lo+Math.floor(f()*(hi-lo+1)),pick:arr=>arr[Math.floor(f()*arr.length)],shuffle:arr=>{const x=arr.slice();for(let i=x.length-1;i>0;i--){const j=Math.floor(f()*(i+1));[x[i],x[j]]=[x[j],x[i]]}return x},chance:p=>f()<p}}
+function pl(n,f){const a=Math.abs(n)%100,b=a%10;if(a>10&&a<20)return f[2];if(b>1&&b<5)return f[1];if(b===1)return f[0];return f[2]}
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+function num(q,big,a,o){return Object.assign({k:'num',q,big,a:String(a)},o||{})}
+function mc(R,q,big,a,ds,o){const u=[String(a)];for(const d of ds){const s=String(d);if(!u.includes(s))u.push(s)}const opts=R.shuffle(u.slice(0,4));return Object.assign({k:'mc',q,big,opts,a:opts.indexOf(String(a))},o||{})}
+function mcFixed(q,big,opts,ans,o){return Object.assign({k:'mc',q,big,opts,a:opts.indexOf(ans),fixed:1},o||{})}
+function nd(R,a){const out=[];for(const c of R.shuffle([a+1,a-1,a+2,a-2,a+10,a-10,a+5]))if(c>=0&&c!==a&&!out.includes(c))out.push(c);return out.slice(0,3)}
+
+const NM=[{n:'Садия',g:'Садии',f:1},{n:'Мадина',g:'Мадины',f:1},{n:'Азиз',g:'Азиза',f:0},{n:'Тимур',g:'Тимура',f:0},{n:'Лола',g:'Лолы',f:1},{n:'Самир',g:'Самира',f:0},{n:'Камила',g:'Камилы',f:1},{n:'Карим',g:'Карима',f:0}];
+const IT=[['яблоко','яблока','яблок'],['конфета','конфеты','конфет'],['карандаш','карандаша','карандашей'],['мяч','мяча','мячей'],['книга','книги','книг'],['шарик','шарика','шариков'],['груша','груши','груш'],['машинка','машинки','машинок']];
+const EMO=['🍎','⭐','🐟','🌸','🎈','🐞','🍓','🚗','🐥','🍬'];
+const TH=['тысячу','тысячи','тысяч'];
+
+/* ---------- Математика: генераторы ---------- */
+const MG={
+ count:(R,p)=>{const n=R.int(2,p.max||10),e=R.pick(EMO);return num('Посчитай. Сколько здесь всего?',Array(n).fill(e).join(' '),n,{emo:1})},
+ cmp:(R,p)=>{const a=R.int(0,p.max);let b=R.chance(.2)?a:R.int(0,p.max);if(p.max>=1000&&R.chance(.5))b=Math.max(0,a+R.pick([-1,1])*R.int(1,p.max>=1e5?900:90));const s=a>b?'>':a<b?'<':'=';return mcFixed('Поставь знак: больше, меньше или равно',`${fmt(a)}  ?  ${fmt(b)}`,['>','<','='],s)},
+ seq:(R,p)=>{const st=R.pick(p.steps||[1]);const len=5;const start=R.int(0,Math.max(0,p.max-st*(len-1)));let arr=Array.from({length:len},(_,i)=>start+i*st);if(p.max>10&&R.chance(.3))arr.reverse();const h=R.int(1,3);return num('Какое число пропущено?',arr.map((x,i)=>i===h?'__':fmt(x)).join(',  '),arr[h])},
+ add:(R,p)=>{let a,b;for(let t=0;t<80;t++){a=R.int(p.min||1,p.max-1);b=R.int(1,p.max-a);const c=(a%10)+(b%10)>=10;if(!p.carry||p.carry==='any'||(p.carry==='yes')===c)break}return num('Реши пример',`${fmt(a)} + ${fmt(b)} = ?`,a+b)},
+ sub:(R,p)=>{let a,b;for(let t=0;t<80;t++){a=R.int(p.min||2,p.max);b=R.int(1,a-1);const br=(a%10)<(b%10);if(!p.carry||p.carry==='any'||(p.carry==='yes')===br)break}return num('Реши пример',`${fmt(a)} − ${fmt(b)} = ?`,a-b)},
+ comp:(R,p)=>{const n=R.int(3,p.n||10),a=R.int(1,n-1);return num('Состав числа',`${n} — это ${a} и ?`,n-a)},
+ missAdd:(R,p)=>{const c=R.int(3,p.max),a=R.int(1,c-1),b=c-a;return R.chance(.5)?num('Какое число спряталось?',`${fmt(a)} + ? = ${fmt(c)}`,b):num('Какое число спряталось?',`? + ${fmt(b)} = ${fmt(c)}`,a)},
+ missSub:(R,p)=>{const a=R.int(3,p.max),b=R.int(1,a-1);return num('Какое число спряталось?',`${fmt(a)} − ? = ${fmt(a-b)}`,b)},
+ tens:(R,p)=>{if(p.max<=20){const n=R.int(11,19),k=R.int(0,2);if(k===0)return num('Запиши число цифрами',`1 десяток и ${n-10} ${pl(n-10,['единица','единицы','единиц'])}`,n);if(k===1)return num('Какое число идёт следующим?',`${n}  →  ?`,n+1);return num('Какое число стоит перед ним?',`?  →  ${n}`,n-1)}
+  const t=R.int(1,8),k=R.int(0,2);if(k===0)return num('Запиши число цифрами',`${t} ${pl(t,['десяток','десятка','десятков'])}`,t*10);if(k===1)return num('Сколько десятков в этом числе?',`${t*10}`,t);const u=R.int(1,9-t);return num('Реши пример',`${t*10} + ${u*10} = ?`,(t+u)*10)},
+ place:(R,p)=>{if(p.d===2){const n=R.int(21,99),k=R.int(0,2);if(k===0)return num('Запиши число цифрами',`${Math.floor(n/10)} дес. ${n%10} ед.`,n);if(k===1)return num('Сколько десятков в числе?',`${n}`,Math.floor(n/10));return num('Какая цифра стоит в разряде единиц?',`${n}`,n%10)}
+  if(p.d===3){const h=R.int(1,9),t=R.int(0,9),u=R.int(0,9),n=h*100+t*10+u,k=R.int(0,2);if(k===0)return num('Запиши число цифрами',`${h} сот. ${t} дес. ${u} ед.`,n);if(k===1)return num('Какая цифра в разряде сотен?',fmt(n),h);return num('Какая цифра в разряде десятков?',fmt(n),t)}
+  const n=R.int(10000,999999),k=R.int(0,3);if(k===0)return num('Какое число на 1 000 больше?',fmt(n),n+1000);if(k===1)return num('Какая цифра в разряде тысяч?',fmt(n),Math.floor(n/1000)%10);if(k===2)return num('Какое число на 10 000 меньше?',fmt(n),n-10000);return num('Сколько всего тысяч в этом числе?',fmt(n),Math.floor(n/1000))},
+ wpAdd:(R,p)=>{const P=R.pick(NM);if(p.max>100){const a=R.int(100,Math.floor(p.max*.6)),b=R.int(50,p.max-a);return num('Задача',`В первый день собрали ${a} кг хлопка, а во второй — ${b} кг. Сколько килограммов хлопка собрали за два дня?`,a+b)}
+  const a=R.int(2,p.max-2),b=R.int(2,p.max-a);if(R.chance(.5)){const it=R.pick(IT);return num('Задача',`У ${P.g} было ${a} ${pl(a,it)}. ${P.f?'Ей':'Ему'} дали ещё ${b}. Сколько ${it[2]} стало у ${P.g}?`,a+b)}
+  return num('Задача',`На ветке сидели ${a} ${pl(a,['птичка','птички','птичек'])}. Прилетели ещё ${b}. Сколько птичек стало на ветке?`,a+b)},
+ wpSub:(R,p)=>{const P=R.pick(NM);if(p.max>100){const a=R.int(200,p.max),b=R.int(50,a-50);return num('Задача',`В магазин привезли ${a} кг яблок. Продали ${b} кг. Сколько килограммов яблок осталось?`,a-b)}
+  const a=R.int(3,p.max),b=R.int(1,a-1);if(R.chance(.5)){const it=R.pick(IT);return num('Задача',`У ${P.g} было ${a} ${pl(a,it)}. ${P.n} ${P.f?'отдала':'отдал'} другу ${b}. Сколько ${it[2]} осталось?`,a-b)}
+  return num('Задача',`В вазе лежали ${a} ${pl(a,['груша','груши','груш'])}. Дети съели ${b}. Сколько груш осталось в вазе?`,a-b)},
+ wp2:(R,p)=>{const a=R.int(5,Math.max(6,Math.floor(p.max*.6))),b=R.int(2,Math.max(2,p.max-a));if(R.chance(.5)){const c=R.int(1,a+b-1);return num('Задача в два действия',`На полке было ${a} ${pl(a,['книга','книги','книг'])}. Положили ещё ${b}, а потом взяли ${c}. Сколько книг стало на полке?`,a+b-c)}
+  const c=R.int(1,a);return num('Задача в два действия',`В автобусе ехали ${a} ${pl(a,['человек','человека','человек'])}. На остановке ${c} вышли, а ${b} вошли. Сколько человек стало в автобусе?`,a-c+b)},
+ len:(R)=>{const k=R.int(0,2);if(k===0)return num('Единицы длины','1 дм = ? см',10);if(k===1){const a=R.int(5,12),b=R.int(2,6);return num('Задача',`Карандаш длиной ${a} см, а ручка на ${b} см длиннее. Какой длины ручка (в см)?`,a+b)}const a=R.int(10,20),b=R.int(2,a-3);return num('Задача',`Лента была длиной ${a} см. Отрезали ${b} см. Сколько сантиметров осталось?`,a-b)},
+ len2:(R)=>{const k=R.int(0,4),n=R.int(2,9);if(k===0)return num('Единицы длины',`${n} дм = ? см`,n*10);if(k===1)return num('Единицы длины',`${n} м = ? дм`,n*10);if(k===2)return num('Единицы длины','1 м = ? см',100);if(k===3){const m=n*10+R.int(1,9);return num('Единицы длины',`${m} см = ${n} дм ? см`,m%10)}const b=R.int(1,9);return num('Единицы длины',`${n} дм ${b} см = ? см`,n*10+b)},
+ time:(R)=>{const k=R.int(0,4);if(k===0)return num('Время','1 час = ? минут',60);if(k===1)return num('Время','Сколько часов в сутках?',24);if(k===2){const h=R.int(1,8),d=R.int(1,4);return num('Время',`Сейчас ${h} ${pl(h,['час','часа','часов'])}. Который час будет через ${d} ${pl(d,['час','часа','часов'])}?`,h+d)}
+  if(k===3){const a=R.int(2,6)*5,b=R.int(2,5)*5;return num('Время',`Первый мультфильм длится ${a} минут, второй — ${b} минут. Сколько минут длятся оба мультфильма?`,a+b)}return num('Время','Сколько дней в неделе?',7)},
+ price:(R,p)=>{const P=R.pick(NM);if(p.easy){if(R.chance(.5)){const a=R.int(1,5),b=R.int(1,4);return num('Деньги',`Карандаш стоит ${a} ${pl(a,TH)} сумов, а тетрадь — ${b} ${pl(b,TH)}. Сколько тысяч сумов стоят карандаш и тетрадь вместе?`,a+b)}
+   const k=R.int(2,8);return num('Деньги',`У ${P.g} было 10 тысяч сумов. ${P.f?'Она купила':'Он купил'} мороженое за ${k} ${pl(k,TH)}. Сколько тысяч сумов осталось?`,10-k)}
+  const a=R.int(2,9),b=R.int(2,9);if(R.chance(.5))return num('Цена, количество, стоимость',`Одна ручка стоит ${a} ${pl(a,TH)} сумов. Сколько тысяч сумов стоят ${b} ${pl(b,['ручка','ручки','ручек'])}?`,a*b);
+  return num('Цена, количество, стоимость',`За ${b} ${pl(b,['тетрадь','тетради','тетрадей'])} заплатили ${a*b} ${pl(a*b,TH)} сумов. Сколько тысяч сумов стоит одна тетрадь?`,a)},
+ shapes:(R)=>{const B=[['Сколько углов у треугольника?','3',['4','5','2']],['Сколько сторон у квадрата?','4',['3','5','6']],['Сколько углов у круга?','0',['1','2','4']],['У какой фигуры нет углов?','круг',['квадрат','треугольник','прямоугольник']],['Сколько углов у пятиугольника?','5',['4','6','3']],['На какую фигуру похож мяч?','шар',['куб','конус','цилиндр']],['На какую фигуру похож игральный кубик?','куб',['шар','конус','цилиндр']],['У квадрата все стороны …','равные',['разные','кривые','круглые']],['Сколько вершин у прямоугольника?','4',['3','5','2']]];const x=R.pick(B);return mc(R,x[0],'',x[1],x[2])},
+ mul:(R,p)=>{const a=R.pick(p.t),b=R.int(2,10);return R.chance(.5)?num('Реши пример',`${a} × ${b} = ?`,a*b):num('Реши пример',`${b} × ${a} = ?`,a*b)},
+ div:(R,p)=>{const a=R.pick(p.t),b=R.int(2,10);return num('Реши пример',`${a*b} : ${a} = ?`,b)},
+ mulWP:(R,p)=>{const a=R.pick(p.t),b=R.int(2,9);if(R.chance(.5))return num('Задача',`В одной коробке ${a} ${pl(a,['карандаш','карандаша','карандашей'])}. Сколько карандашей в ${b} коробках?`,a*b);return num('Задача',`На одной тарелке ${a} ${pl(a,['пирожок','пирожка','пирожков'])}. Сколько пирожков на ${b} тарелках?`,a*b)},
+ divWP:(R,p)=>{const a=R.pick(p.t),b=R.int(2,9),n=a*b;if(R.chance(.5))return num('Задача',`${n} ${pl(n,['конфету','конфеты','конфет'])} разложили поровну в ${b} ${pl(b,['пакет','пакета','пакетов'])}. Сколько конфет в одном пакете?`,a);return num('Задача',`${n} ${pl(n,['ученик','ученика','учеников'])} встали поровну в ${b} ${pl(b,['ряд','ряда','рядов'])}. Сколько учеников в каждом ряду?`,a)},
+ order:(R,p)=>{const k=R.int(0,p.br?4:2),a=R.int(2,9),b=R.int(2,9),c=R.int(2,9);let e,v;
+  if(k===0){e=`${a*3} + ${b} × ${c}`;v=a*3+b*c}else if(k===1){e=`${a} × ${b} − ${a}`;v=a*b-a}else if(k===2){e=`${a*b} : ${a} + ${c}`;v=b+c}else if(k===3){e=`(${a} + ${b}) × ${c}`;v=(a+b)*c}else{e=`(${a*c} + ${b*c}) : ${c}`;v=a+b}
+  return num('Реши, соблюдая порядок действий',e+' = ?',v)},
+ perim:(R)=>{const k=R.int(0,2),a=R.int(2,12),b=R.int(2,9);if(k===0)return num('Периметр',`Сторона квадрата ${a} см. Найди периметр (в см).`,4*a);if(k===1)return num('Периметр',`Длина прямоугольника ${a} см, ширина ${b} см. Найди периметр (в см).`,2*(a+b));const c=R.int(Math.abs(a-b)+1,a+b-1);return num('Периметр',`Стороны треугольника ${a} см, ${b} см и ${c} см. Найди периметр (в см).`,a+b+c)},
+ area:(R)=>{const k=R.int(0,2),a=R.int(3,12),b=R.int(2,9);if(k===0)return num('Площадь',`Длина прямоугольника ${a} см, ширина ${b} см. Найди площадь (в кв. см).`,a*b);if(k===1)return num('Площадь',`Сторона квадрата ${b} см. Найди площадь (в кв. см).`,b*b);return num('Площадь',`Площадь прямоугольника ${a*b} кв. см, длина ${a} см. Найди ширину (в см).`,b)},
+ mul21:(R)=>{const a=R.int(11,49),b=R.int(2,Math.min(9,Math.floor(400/a)));return num('Реши пример',`${a} × ${b} = ?`,a*b)},
+ div21:(R)=>{const b=R.int(2,6),q=R.int(11,Math.floor(99/b));return num('Реши пример',`${b*q} : ${b} = ?`,q)},
+ divRem:(R)=>{const b=R.int(2,9),q=R.int(1,9),r=R.int(1,b-1),n=b*q+r;return R.chance(.5)?num('Найди остаток',`${n} : ${b} = ${q} (ост. ?)`,r):num('Найди частное',`${n} : ${b} = ? (ост. ${r})`,q)},
+ mul31:(R)=>{const a=R.int(101,450),b=R.int(2,Math.floor(999/a));return num('Реши пример',`${a} × ${b} = ?`,a*b)},
+ div31:(R)=>{const b=R.int(2,9),q=R.int(Math.ceil(100/b),Math.floor(999/b));return num('Реши пример',`${b*q} : ${b} = ?`,q)},
+ frac:(R,p)=>{const d=R.pick([2,3,4,5,6,10]),m=R.int(2,9),n=d*m;if(p.k&&d>2&&R.chance(.5)){const k=R.int(2,d-1);return num('Найди часть числа',`${k}/${d} от ${n} = ?`,m*k)}return num('Найди часть числа',`1/${d} от ${n} = ?`,m)},
+ fracCmp:(R,p)=>{if(p.num&&R.chance(.5)){const x=R.int(2,9);let y=R.int(2,9);if(y===x)y=x===9?2:x+1;const o=[`1/${x}`,`1/${y}`];return mc(R,'Какая дробь больше?',`1/${x}  или  1/${y}`,x<y?o[0]:o[1],[x<y?o[1]:o[0]])}
+  const d=R.int(4,12);const a=R.int(1,d-1);let b=R.int(1,d-1);if(b===a)b=a===1?2:a-1;return mc(R,'Какая дробь больше?',`${a}/${d}  или  ${b}/${d}`,`${Math.max(a,b)}/${d}`,[`${Math.min(a,b)}/${d}`])},
+ fracAdd:(R)=>{const d=R.int(5,12),a=R.int(1,d-2),b=R.int(1,d-1-a);return R.chance(.5)?num('Дроби',`${a}/${d} + ${b}/${d} = ?/${d}`,a+b):num('Дроби',`${a+b}/${d} − ${b}/${d} = ?/${d}`,a)},
+ eq:(R,p)=>{const m=p.max||100,k=R.int(0,2),x=R.int(5,m),a=R.int(2,m);if(k===0)return num('Найди x',`x + ${a} = ${x+a}`,x);if(k===1)return num('Найди x',`x − ${a} = ${x}`,x+a);return num('Найди x',`${x+a} − x = ${a}`,x)},
+ eqMul:(R)=>{const a=R.int(2,9),x=R.int(2,12),k=R.int(0,2);if(k===0)return num('Найди x',`x × ${a} = ${a*x}`,x);if(k===1)return num('Найди x',`x : ${a} = ${x}`,a*x);return num('Найди x',`${a*x} : x = ${a}`,x)},
+ colAdd:(R,p)=>{const lo=10**(p.d-1),hi=10**p.d-1,a=R.int(lo,hi),b=R.int(lo,hi);return num('Сложи в столбик',`${fmt(a)} + ${fmt(b)} = ?`,a+b)},
+ colSub:(R,p)=>{const lo=10**(p.d-1),hi=10**p.d-1;let a=R.int(lo,hi),b=R.int(lo,hi);if(b>a)[a,b]=[b,a];if(a===b)a+=1;return num('Вычти в столбик',`${fmt(a)} − ${fmt(b)} = ?`,a-b)},
+ mul2d:(R)=>{const a=R.int(12,99),b=R.int(11,35);return num('Умножь в столбик',`${a} × ${b} = ?`,a*b)},
+ divBy:(R)=>{let b,q;if(R.chance(.5)){b=R.int(3,9);q=R.int(102,999)}else{b=R.int(11,25);q=R.int(12,60)}return num('Раздели',`${fmt(b*q)} : ${b} = ?`,q)},
+ speed:(R,p)=>{const v=R.pick(p.easy?[5,10,20,30,40,50,60]:[4,5,12,15,45,60,70,80,90]),t=R.int(2,p.easy?4:6),s=v*t;const who=v<=5?'Пешеход':v<=20?'Велосипедист':'Автобус';const k=R.int(0,2);
+  if(k===0)return num('Скорость, время, расстояние',`${who} движется со скоростью ${v} км/ч. Какое расстояние он преодолеет за ${t} ч (в км)?`,s);
+  if(k===1)return num('Скорость, время, расстояние',`За ${t} ч ${who.toLowerCase()} преодолел ${s} км. С какой скоростью он двигался (в км/ч)?`,v);
+  return num('Скорость, время, расстояние',`${who} преодолел ${s} км со скоростью ${v} км/ч. Сколько часов он был в пути?`,t)},
+ angle:(R)=>{const B=[['Сколько градусов в прямом угле?','90',['180','45','60']],['Сколько прямых углов у квадрата?','4',['2','3','0']],['Чему равна сумма углов треугольника?','180°',['90°','360°','270°']],['Угол меньше прямого называется …','острый',['тупой','развёрнутый','прямой']],['Угол больше прямого, но меньше 180°, называется …','тупой',['острый','прямой','развёрнутый']],['Сколько градусов в развёрнутом угле?','180',['90','360','100']]];const x=R.pick(B);return mc(R,x[0],'',x[1],x[2])},
+ vol:(R)=>{const a=R.int(2,6);if(R.chance(.5))return num('Объём',`Ребро куба ${a} см. Найди объём (в куб. см).`,a*a*a);const b=R.int(2,5),c=R.int(2,4);return num('Объём',`Длина коробки ${a} см, ширина ${b} см, высота ${c} см. Найди объём (в куб. см).`,a*b*c)},
+ olymp:(R)=>{const k=R.int(0,9);
+  if(k===0){const c=R.int(2,7),r=R.int(2,6);return num('Олимпиадная задача',`Во дворе ${c} ${pl(c,['курица','курицы','куриц'])} и ${r} ${pl(r,['кролик','кролика','кроликов'])}. Сколько всего ног у них?`,2*c+4*r)}
+  if(k===1){const r=R.int(2,6),c=R.int(2,8),h=r+c;return num('Олимпиадная задача',`У кур и кроликов вместе ${h} голов и ${2*c+4*r} ног. Сколько кроликов?`,r)}
+  if(k===2){const x=R.int(5,40),d=R.int(2,20);return num('Олимпиадная задача',`Сумма двух чисел равна ${2*x+d}, а одно из них больше другого на ${d}. Найди меньшее число.`,x)}
+  if(k===3){const s=R.int(6,9),m=s+R.int(22,30),q=R.int(2,6);return num('Олимпиадная задача',`Сейчас маме ${m} ${pl(m,['год','года','лет'])}, а Садии ${s}. Сколько лет будет маме, когда Садии исполнится ${s+q}?`,m+q)}
+  if(k===4){const d=R.int(2,5),n=R.int(3,9);return num('Олимпиадная задача',`Вдоль дорожки длиной ${d*n} м через каждые ${d} м поставили столбики, включая начало и конец дорожки. Сколько столбиков?`,n+1)}
+  if(k===5){const p=R.int(5,15),m=R.int(4,12);return num('Олимпиадная задача',`В книге ${p*m} страниц. Садия читает по ${p} страниц в день. За сколько дней она прочитает книгу?`,m)}
+  if(k===6){const n=R.int(3,10);return num('Олимпиадная задача',`Бревно распилили на ${n} частей. Сколько распилов сделали?`,n-1)}
+  if(k===7){const s=R.int(15,22),f=R.int(3,6);return num('Олимпиадная задача',`Чтобы подняться с 1-го на 2-й этаж, нужно пройти ${s} ступенек. Сколько ступенек нужно пройти с 1-го на ${f}-й этаж?`,s*(f-1))}
+  if(k===8){const n=R.int(3,6);return num('Олимпиадная задача',`${n} друзей при встрече пожали друг другу руки — каждый с каждым по одному разу. Сколько было рукопожатий?`,n*(n-1)/2)}
+  const s=R.int(2,9);let c=0;for(let i=10;i<100;i++)if(Math.floor(i/10)+i%10===s)c++;return num('Олимпиадная задача',`Сколько существует двузначных чисел, у которых сумма цифр равна ${s}?`,c)}
+};
+
+/* ---------- Математика: программа по месяцам (сентябрь … май) ---------- */
+const MATH={
+1:[
+ {t:'Числа от 1 до 10',rule:'Числа идут по порядку: 1, 2, 3 … 10. Знак > значит «больше», < — «меньше», = — «равно». Например: 5 > 3, 2 < 7, 4 = 4.',g:[['count',{max:10}],['cmp',{max:10}],['seq',{max:10}],['add',{max:5}]]},
+ {t:'Сложение и вычитание до 10',rule:'Сложить — значит прибавить, стало больше: 3 + 2 = 5. Вычесть — значит убрать, стало меньше: 5 − 2 = 3.',g:[['add',{max:10}],['sub',{max:10}],['wpAdd',{max:10}],['wpSub',{max:10}]]},
+ {t:'Состав чисел до 10',rule:'Каждое число можно разложить на два: 10 — это 6 и 4, 7 — это 5 и 2. Если знаешь состав числа, легко найти спрятанное число: 3 + ? = 8, ответ 5.',g:[['comp',{n:10}],['missAdd',{max:10}],['missSub',{max:10}],['wpSub',{max:10}]]},
+ {t:'Числа от 11 до 20',rule:'Число 14 — это 1 десяток и 4 единицы. После 19 идёт 20 — это 2 десятка.',g:[['tens',{max:20}],['seq',{max:20}],['cmp',{max:20}],['add',{max:10}]]},
+ {t:'Сложение до 20 без перехода',rule:'Складываем единицы с единицами: 12 + 5 = 17, потому что 2 + 5 = 7, а десяток остаётся.',g:[['add',{max:20,min:10,carry:'no'}],['sub',{max:20,min:11,carry:'no'}],['wpAdd',{max:20}],['missAdd',{max:20}]]},
+ {t:'Переход через десяток',rule:'8 + 5: сначала доберём до 10 (8 + 2 = 10), потом прибавим остаток (10 + 3 = 13). 13 − 5: сначала до 10 (13 − 3 = 10), потом ещё 2 (10 − 2 = 8).',g:[['add',{max:20,carry:'yes'}],['sub',{max:20,min:11,carry:'yes'}],['wpSub',{max:20}],['wpAdd',{max:20}]]},
+ {t:'Величины: сантиметр, час, сум',rule:'1 дм = 10 см. 1 час = 60 минут. В неделе 7 дней. Деньги считаем в сумах: 1 тысяча, 2 тысячи, 5 тысяч сумов.',g:[['len',{}],['time',{}],['price',{easy:1}],['add',{max:20,carry:'any'}]]},
+ {t:'Фигуры и задачи в два действия',rule:'Треугольник — 3 угла, квадрат — 4 равные стороны, у круга нет углов. В задаче в два действия сначала делаем первое действие, потом второе.',g:[['shapes',{}],['wp2',{max:20}],['add',{max:20,carry:'any'}],['sub',{max:20,carry:'any'}]]},
+ {t:'Повторение. Десятки до 100',rule:'10, 20, 30 … 100 — круглые десятки. 3 десятка = 30. 30 + 40 = 70, потому что 3 + 4 = 7.',g:[['tens',{max:100}],['add',{max:20,carry:'any'}],['sub',{max:20,carry:'any'}],['missAdd',{max:20}],['wp2',{max:20}]]}],
+2:[
+ {t:'Числа до 100',rule:'47 — это 4 десятка и 7 единиц. Считаем двойками, пятёрками и десятками: 2, 4, 6 … 5, 10, 15 … 10, 20, 30 …',g:[['place',{d:2}],['cmp',{max:100}],['seq',{max:100,steps:[2,5,10]}],['tens',{max:100}]]},
+ {t:'Сложение и вычитание до 100',rule:'Десятки складываем с десятками, единицы — с единицами: 34 + 25 = 59 (30 + 20 = 50, 4 + 5 = 9).',g:[['add',{max:100,min:10,carry:'no'}],['sub',{max:99,min:20,carry:'no'}],['wpAdd',{max:100}],['missAdd',{max:100}]]},
+ {t:'Переход через десяток до 100',rule:'38 + 7: 38 + 2 = 40, 40 + 5 = 45. 52 − 8: 52 − 2 = 50, 50 − 6 = 44.',g:[['add',{max:100,min:10,carry:'yes'}],['sub',{max:99,min:20,carry:'yes'}],['wpSub',{max:100}],['wp2',{max:100}]]},
+ {t:'Умножение: таблицы 2 и 3',rule:'Умножение — это сложение одинаковых чисел: 3 × 4 = 3 + 3 + 3 + 3 = 12. От перестановки множителей результат не меняется: 3 × 4 = 4 × 3.',g:[['mul',{t:[2,3]}],['mulWP',{t:[2,3]}],['seq',{max:30,steps:[2,3]}]]},
+ {t:'Таблицы умножения на 4 и 5',rule:'5 × 6 = 30: считаем пятёрками 5, 10, 15, 20, 25, 30. 4 × 6 — это дважды по 2 × 6: 12 + 12 = 24.',g:[['mul',{t:[4,5]}],['mulWP',{t:[4,5]}],['mul',{t:[2,3,4,5]}],['add',{max:100,carry:'any'}]]},
+ {t:'Деление. Таблицы 6 и 7',rule:'Деление — это обратное умножению: 3 × 4 = 12, значит 12 : 3 = 4 и 12 : 4 = 3. Делить — значит раздавать поровну.',g:[['div',{t:[2,3,4,5]}],['mul',{t:[6,7]}],['divWP',{t:[2,3,4,5]}],['mul',{t:[2,3,4,5,6,7]}]]},
+ {t:'Таблицы 8 и 9. Порядок действий',rule:'Сначала умножение и деление, потом сложение и вычитание: 2 + 3 × 4 = 2 + 12 = 14.',g:[['mul',{t:[8,9]}],['div',{t:[2,3,4,5,6,7,8,9]}],['order',{}],['mul',{t:[2,3,4,5,6,7,8,9]}]]},
+ {t:'Длина, периметр, время',rule:'1 м = 10 дм = 100 см. Периметр — сумма длин всех сторон. У квадрата со стороной 3 см периметр 3 + 3 + 3 + 3 = 12 см.',g:[['len2',{}],['perim',{}],['time',{}],['divWP',{t:[2,3,4,5,6]}]]},
+ {t:'Повторение: задачи в два действия',rule:'Читай задачу два раза. Найди, что известно и что нужно узнать. Сначала первое действие, потом второе.',g:[['wp2',{max:100}],['mul',{t:[2,3,4,5,6,7,8,9]}],['div',{t:[2,3,4,5,6,7,8,9]}],['missAdd',{max:100}],['order',{}]]}],
+3:[
+ {t:'Числа до 1000',rule:'352 — это 3 сотни, 5 десятков и 2 единицы. 10 десятков = 1 сотня, 10 сотен = 1 тысяча.',g:[['place',{d:3}],['cmp',{max:1000}],['seq',{max:1000,steps:[10,50,100]}],['mul',{t:[6,7,8,9]}]]},
+ {t:'Сложение и вычитание до 1000',rule:'Складываем по разрядам: 245 + 132 = 377 (сотни 2 + 1, десятки 4 + 3, единицы 5 + 2).',g:[['add',{max:1000,min:100,carry:'any'}],['sub',{max:999,min:200,carry:'any'}],['wpAdd',{max:1000}],['wpSub',{max:1000}]]},
+ {t:'Внетабличное умножение и деление',rule:'23 × 3 = 20 × 3 + 3 × 3 = 60 + 9 = 69. 84 : 4 = 80 : 4 + 4 : 4 = 20 + 1 = 21.',g:[['mul21',{}],['div21',{}],['mul',{t:[2,3,4,5,6,7,8,9]}],['div',{t:[6,7,8,9]}]]},
+ {t:'Деление с остатком',rule:'17 : 5 = 3 (ост. 2), потому что 5 × 3 = 15, а 17 − 15 = 2. Остаток всегда меньше делителя.',g:[['divRem',{}],['div21',{}],['mul21',{}]]},
+ {t:'Умножение и деление трёхзначных',rule:'213 × 3: 200 × 3 = 600, 10 × 3 = 30, 3 × 3 = 9, всего 639. Делим тоже по разрядам: 936 : 3 = 312.',g:[['mul31',{}],['div31',{}],['divRem',{}],['add',{max:1000,min:100,carry:'any'}]]},
+ {t:'Доли и дроби',rule:'1/4 — одна из четырёх равных частей. Чтобы найти 1/4 от 20, делим 20 на 4: получится 5. Из дробей с одинаковым знаменателем больше та, у которой числитель больше.',g:[['frac',{}],['fracCmp',{}],['div',{t:[2,3,4,5,6,7,8,9]}]]},
+ {t:'Площадь и периметр',rule:'Площадь прямоугольника = длина × ширина. Периметр = (длина + ширина) × 2. Площадь измеряем в квадратных сантиметрах.',g:[['area',{}],['perim',{}],['mul21',{}]]},
+ {t:'Уравнения и скобки',rule:'Неизвестное слагаемое = сумма − известное слагаемое. Неизвестный множитель = произведение : известный множитель. Действия в скобках выполняем первыми.',g:[['eq',{max:500}],['eqMul',{}],['order',{br:1}]]},
+ {t:'Цена, количество, стоимость',rule:'Стоимость = цена × количество. Цена = стоимость : количество. Расстояние = скорость × время.',g:[['price',{}],['speed',{easy:1}],['wp2',{max:1000}],['order',{br:1}]]}],
+4:[
+ {t:'Многозначные числа',rule:'Классы: единицы, тысячи, миллионы. В числе 405 230 четыреста пять тысяч двести тридцать единиц. Сравниваем числа по старшим разрядам.',g:[['place',{d:6}],['cmp',{max:999999}],['seq',{max:100000,steps:[1000,5000,10000]}]]},
+ {t:'Письменное сложение и вычитание',rule:'Пишем единицы под единицами, десятки под десятками. Складываем справа налево, не забываем перенос в следующий разряд.',g:[['colAdd',{d:4}],['colSub',{d:4}],['colAdd',{d:5}],['wpAdd',{max:5000}]]},
+ {t:'Умножение на двузначное число',rule:'34 × 12 = 34 × 10 + 34 × 2 = 340 + 68 = 408.',g:[['mul2d',{}],['mul31',{}],['eqMul',{}]]},
+ {t:'Деление на однозначное и двузначное',rule:'Делим по старшим разрядам слева направо. Проверяем умножением: если 672 : 4 = 168, то 168 × 4 = 672.',g:[['divBy',{}],['divRem',{}],['eq',{max:1000}]]},
+ {t:'Дроби',rule:'Чтобы найти 3/4 от 20: 20 : 4 = 5, 5 × 3 = 15. Дроби с одинаковым знаменателем складываем по числителю: 2/7 + 3/7 = 5/7. Из дробей 1/3 и 1/5 больше 1/3.',g:[['fracAdd',{}],['fracCmp',{num:1}],['frac',{k:1}]]},
+ {t:'Скорость, время, расстояние',rule:'S = v × t. Скорость v = S : t. Время t = S : v. Скорость измеряем в км/ч.',g:[['speed',{}],['price',{}],['wp2',{max:1000}]]},
+ {t:'Углы, площадь, объём',rule:'Прямой угол — 90°. Сумма углов треугольника — 180°. Объём коробки = длина × ширина × высота.',g:[['angle',{}],['area',{}],['vol',{}],['perim',{}]]},
+ {t:'Олимпиадные задачи',rule:'Не спеши. Нарисуй схему или таблицу. Проверь ответ: подходит ли он к условию задачи?',g:[['olymp',{}],['olymp',{}],['eq',{max:1000}],['order',{br:1}]]},
+ {t:'Пробный экзамен',rule:'Экзамен в Президентскую школу: первый этап — математика, второй — логика и английский. Реши задания как на экзамене: внимательно и без подсказок.',g:[['olymp',{}],['mul2d',{}],['divBy',{}],['frac',{k:1}],['speed',{}],['area',{}],['eq',{max:1000}]]}]
+};
+
+/* ---------- Английский язык ---------- */
+const W=(s)=>s.split('|').map(x=>{const [en,e,ru]=x.split('~');return {en,e,ru}});
+const ENG={
+1:[
+ {t:'Hello! Буквы A–D',rule:'Привет — Hello! Пока — Goodbye! Учим буквы A, B, C, D: A — apple, B — ball, C — cat, D — dog. Нажимай 🔊, чтобы услышать слово.',L:'ABCD',w:W('apple~🍎~яблоко|ball~⚽~мяч|cat~🐱~кошка|dog~🐶~собака|hello~👋~привет|bag~🎒~портфель|duck~🦆~утка|car~🚗~машина')},
+ {t:'Colours. Буквы E–H',rule:'Red — красный, blue — синий, green — зелёный, yellow — жёлтый. Новые буквы: E — egg, F — fish, G — girl, H — hat.',L:'EFGH',w:W('red~🔴~красный|blue~🔵~синий|green~🟢~зелёный|yellow~🟡~жёлтый|orange~🟠~оранжевый|black~⚫~чёрный|white~⚪~белый|egg~🥚~яйцо|fish~🐟~рыба|girl~👧~девочка|hat~🎩~шляпа')},
+ {t:'Numbers 1–10. Буквы I–L',rule:'One, two, three, four, five, six, seven, eight, nine, ten. Буквы: I — ice cream, J — juice, K — kite, L — lion.',L:'IJKL',w:W('one~1~один|two~2~два|three~3~три|four~4~четыре|five~5~пять|six~6~шесть|seven~7~семь|eight~8~восемь|nine~9~девять|ten~10~десять|ice cream~🍦~мороженое|juice~🧃~сок|kite~🪁~воздушный змей|lion~🦁~лев')},
+ {t:'Animals. Буквы M–P',rule:'Животные: monkey — обезьяна, cow — корова, horse — лошадь, frog — лягушка. Буквы: M — monkey, N — nest, O — owl, P — pig.',L:'MNOP',w:W('monkey~🐵~обезьяна|cow~🐄~корова|horse~🐴~лошадь|frog~🐸~лягушка|bird~🐦~птица|mouse~🐭~мышь|pig~🐷~свинья|owl~🦉~сова|panda~🐼~панда|nest~🪺~гнездо')},
+ {t:'My family. Буквы Q–T',rule:'Mother — мама, father — папа, sister — сестра, brother — брат, baby — малыш. Буквы: Q — queen, R — rabbit, S — sun, T — tiger.',L:'QRST',w:W('mother~👩~мама|father~👨~папа|sister~👧~сестра|brother~👦~брат|baby~👶~малыш|grandma~👵~бабушка|grandpa~👴~дедушка|queen~👸~королева|rabbit~🐰~кролик|sun~☀️~солнце|tiger~🐯~тигр')},
+ {t:'My body. Буквы U–Z',rule:'Head — голова, eye — глаз, ear — ухо, nose — нос, hand — рука. Буквы: U — umbrella, V — van, W — watch, Y — yo-yo, Z — zebra.',L:'UVWYZ',w:W('eye~👁️~глаз|ear~👂~ухо|nose~👃~нос|mouth~👄~рот|hand~✋~рука|leg~🦵~нога|foot~🦶~ступня|umbrella~☂️~зонт|van~🚐~фургон|watch~⌚~часы|yo-yo~🪀~йо-йо|zebra~🦓~зебра')},
+ {t:'Food',rule:'Banana — банан, bread — хлеб, milk — молоко, cake — торт, water — вода. Скажи: I like apples!',w:W('apple~🍎~яблоко|banana~🍌~банан|bread~🍞~хлеб|milk~🥛~молоко|egg~🥚~яйцо|cake~🍰~торт|water~💧~вода|carrot~🥕~морковь|orange~🍊~апельсин|cheese~🧀~сыр')},
+ {t:'Toys and school',rule:'Doll — кукла, book — книга, pen — ручка, pencil — карандаш, teddy bear — плюшевый мишка.',w:W('ball~⚽~мяч|doll~🪆~кукла|car~🚗~машина|book~📖~книга|pen~🖊️~ручка|pencil~✏️~карандаш|bag~🎒~портфель|teddy bear~🧸~плюшевый мишка|kite~🪁~воздушный змей|train~🚂~поезд')},
+ {t:'Nature. Повторение',rule:'Sun — солнце, rain — дождь, tree — дерево, flower — цветок, star — звезда, moon — луна.',w:W('sun~☀️~солнце|rain~🌧️~дождь|tree~🌳~дерево|flower~🌸~цветок|star~⭐~звезда|moon~🌙~луна|sea~🌊~море|snow~❄️~снег')}],
+2:[
+ {t:'Numbers 11–20',rule:'Eleven (11), twelve (12), thirteen (13) … twenty (20). Числа от 13 до 19 кончаются на -teen.',w:W('eleven~11~одиннадцать|twelve~12~двенадцать|thirteen~13~тринадцать|fourteen~14~четырнадцать|fifteen~15~пятнадцать|sixteen~16~шестнадцать|seventeen~17~семнадцать|eighteen~18~восемнадцать|nineteen~19~девятнадцать|twenty~20~двадцать'),s:[["I am ___ years old. (7)","seven",["six","nine"]],["Ten and ten is ___.","twenty",["twelve","eleven"]]]},
+ {t:'Clothes',rule:'Shirt — рубашка, dress — платье, shoes — обувь, socks — носки. I have a dress. She has a hat.',w:W('shirt~👕~рубашка|dress~👗~платье|shoes~👟~обувь|cap~🧢~кепка|socks~🧦~носки|coat~🧥~пальто|jeans~👖~джинсы|gloves~🧤~перчатки|scarf~🧣~шарф'),s:[["I ___ a red dress.","have",["has","am"]],["She ___ a blue coat.","has",["have","are"]],["My socks ___ white.","are",["is","am"]],["This is ___ hat.","my",["I","me"]]]},
+ {t:'My house',rule:'House — дом, door — дверь, window — окно, bed — кровать, chair — стул. This is my house.',w:W('house~🏠~дом|door~🚪~дверь|window~🪟~окно|bed~🛏️~кровать|chair~🪑~стул|bath~🛁~ванна|sofa~🛋️~диван|lamp~💡~лампа|kitchen~🍳~кухня|garden~🌻~сад'),s:[["This ___ my house.","is",["are","am"]],["There is a bed in my ___.","bedroom",["kitchen","garden"]],["We cook in the ___.","kitchen",["bath","garden"]]]},
+ {t:'Weather and seasons',rule:'It is sunny — солнечно. It is rainy — дождливо. Seasons: winter, spring, summer, autumn.',w:W('sunny~☀️~солнечно|rainy~🌧️~дождливо|snowy~❄️~снежно|windy~🌬️~ветрено|cloudy~☁️~облачно|winter~⛄~зима|spring~🌷~весна|summer~🏖️~лето|autumn~🍂~осень'),s:[["It is ___ today. I need an umbrella.","rainy",["sunny","hot"]],["In ___ it is cold and snowy.","winter",["summer","spring"]],["It ___ sunny.","is",["are","am"]]]},
+ {t:'Days of the week',rule:'Monday — понедельник, Tuesday — вторник, Wednesday — среда, Thursday — четверг, Friday — пятница, Saturday — суббота, Sunday — воскресенье. Дни недели пишем с большой буквы.',w:W('Monday~~понедельник|Tuesday~~вторник|Wednesday~~среда|Thursday~~четверг|Friday~~пятница|Saturday~~суббота|Sunday~~воскресенье'),s:[["Today is ___. Tomorrow is Tuesday.","Monday",["Sunday","Friday"]],["After Friday comes ___.","Saturday",["Thursday","Monday"]],["There are ___ days in a week.","seven",["five","ten"]]]},
+ {t:'Actions: I can…',rule:'Run — бегать, jump — прыгать, swim — плавать, sing — петь. I can swim. A bird can fly.',w:W('run~🏃~бегать|jump~🤸~прыгать|swim~🏊~плавать|sing~🎤~петь|dance~💃~танцевать|read~📖~читать|write~✍️~писать|sleep~😴~спать|draw~🎨~рисовать|fly~🕊️~летать'),s:[["A fish can ___.","swim",["fly","run"]],["A bird can ___.","fly",["swim","read"]],["I can ___ a song.","sing",["eat","sleep"]],["I ___ swim. I am a good swimmer.","can",["can't","am"]]]},
+ {t:'Food: I like…',rule:'I like pizza. — Я люблю пиццу. She likes rice. — Она любит рис. После he/she добавляем -s.',w:W('pizza~🍕~пицца|rice~🍚~рис|chicken~🍗~курица|soup~🍲~суп|grapes~🍇~виноград|tea~🍵~чай|sandwich~🥪~бутерброд|melon~🍈~дыня|honey~🍯~мёд'),s:[["I ___ apples.","like",["likes","am"]],["She ___ pizza.","likes",["like","is"]],["Do you like rice? Yes, I ___.","do",["am","like"]],["I don't ___ soup.","like",["likes","do"]]]},
+ {t:'Where is it? in, on, under',rule:'In — в (внутри), on — на, under — под. The cat is in the box. The book is on the table.',w:W('park~🏞️~парк|school~🏫~школа|shop~🏪~магазин|zoo~🦒~зоопарк|hospital~🏥~больница|box~📦~коробка|table~🍽️~стол'),s:[["The cat is ___ the box. (внутри)","in",["on","under"]],["The book is ___ the table. (на)","on",["in","under"]],["The ball is ___ the chair. (под)","under",["on","in"]],["I go to ___ every day to learn.","school",["zoo","shop"]],["We see animals at the ___.","zoo",["school","hospital"]]]},
+ {t:'This, these. Повторение',rule:'This — этот (один, рядом). These — эти (много, рядом). One cat — two cats. One mouse — two mice.',w:[],s:[["___ is my pen. (одна, рядом)","This",["These","Those"]],["___ are my books. (много, рядом)","These",["This","That"]],["I have two ___.","cats",["cat","a cat"]],["One mouse, two ___.","mice",["mouses","mouse"]],["One child, two ___.","children",["childs","child"]]]}],
+3:[
+ {t:'To be: am, is, are',rule:'I am, he/she/it is, we/you/they are. I am happy. She is my sister. They are at school.',w:W('happy~😊~весёлый|sad~😢~грустный|tired~😴~уставший|hungry~🤤~голодный|angry~😠~сердитый|scared~😨~испуганный|hot~🥵~жарко|cold~🥶~холодно'),s:[["I ___ seven years old.","am",["is","are"]],["She ___ my sister.","is",["am","are"]],["They ___ at school.","are",["is","am"]],["We ___ happy today.","are",["is","am"]],["It ___ a big dog.","is",["are","am"]],["___ you hungry? Yes, I am.","Are",["Is","Am"]],["He ___ not tired.","is",["are","am"]],["My friends ___ in the park.","are",["is","am"]]]},
+ {t:'Have got / has got',rule:'I/you/we/they have got, he/she/it has got. I have got a bike. She has got a cat.',w:W('bike~🚲~велосипед|kitten~🐈~котёнок|puppy~🐕~щенок|computer~💻~компьютер|phone~📱~телефон|robot~🤖~робот|guitar~🎸~гитара|camera~📷~фотоаппарат'),s:[["I ___ got a bike.","have",["has","am"]],["She ___ got long hair.","has",["have","is"]],["They ___ got a puppy.","have",["has","is"]],["___ he got a phone? Yes, he has.","Has",["Have","Is"]],["We haven't ___ a car.","got",["get","has"]],["My cat ___ got green eyes.","has",["have","are"]],["___ you got a pen?","Have",["Has","Are"]],["He hasn't got ___ brother.","a",["an","the"]]]},
+ {t:"Can and can't",rule:"Can — умею, могу. Can't — не умею. A cat can climb. A fish can't walk. После can глагол без -s: She can run.",w:W('climb~🧗~лазать|skate~⛸️~кататься на коньках|cook~🍳~готовить|ride a bike~🚴~кататься на велосипеде|play football~⚽~играть в футбол|play the piano~🎹~играть на пианино|catch~🤾~ловить|throw~🎯~бросать'),s:[["A cat ___ climb a tree.","can",["can't","is"]],["A fish ___ walk.","can't",["can","is"]],["___ you swim? Yes, I can.","Can",["Do","Are"]],["My brother can ___ the piano.","play",["plays","playing"]],["Penguins can swim, but they ___ fly.","can't",["can","are"]],["She can ___ very fast.","run",["runs","running"]],["Can he cook? No, he ___.","can't",["can","isn't"]],["I can ___ a bike.","ride",["rides","riding"]]]},
+ {t:'There is / There are',rule:'There is — есть (один). There are — есть (много). There is a park. There are three trees.',w:W('river~🏞️~река|bridge~🌉~мост|mountain~⛰️~гора|forest~🌲~лес|city~🏙️~город|farm~🚜~ферма|library~📚~библиотека|bus stop~🚏~остановка'),s:[["There ___ a cat on the sofa.","is",["are","am"]],["There ___ three books on the desk.","are",["is","am"]],["There ___ any milk in the fridge.","isn't",["aren't","not"]],["Is there a park near your house? Yes, there ___.","is",["are","has"]],["There are ___ apples in the bag.","some",["a","any"]],["Are there any cows on the farm? Yes, there ___.","are",["is","do"]],["There ___ a big bridge in our city.","is",["are","have"]],["There ___ many trees in the forest.","are",["is","has"]]]},
+ {t:'Present Simple',rule:'Что делаем обычно, каждый день. I get up at 7. She gets up at 7 — с he/she/it добавляем -s или -es: watches, goes, brushes.',w:W('get up~⏰~вставать|brush teeth~🪥~чистить зубы|have breakfast~🥣~завтракать|go to school~🏫~идти в школу|do homework~📝~делать уроки|watch TV~📺~смотреть телевизор|go to bed~🛏️~ложиться спать|wash~🧼~мыть'),s:[["She ___ up at seven.","gets",["get","getting"]],["I ___ my homework every day.","do",["does","doing"]],["He ___ TV in the evening.","watches",["watch","watching"]],["They ___ to school by bus.","go",["goes","going"]],["___ she like milk? Yes, she does.","Does",["Do","Is"]],["My dad ___ coffee.","doesn't drink",["don't drink","not drink"]],["We ___ football on Sundays.","play",["plays","playing"]],["Tom ___ his teeth every morning.","brushes",["brush","brushing"]]]},
+ {t:'Time and months',rule:"It is seven o'clock — 7:00. Half past three — 3:30. In May — в мае. On Monday — в понедельник. At 8 o'clock — в 8 часов.",w:W('January~~январь|February~~февраль|March~~март|April~~апрель|May~~май|June~~июнь|July~~июль|August~~август|September~~сентябрь|October~~октябрь|November~~ноябрь|December~~декабрь'),s:[["It is ___ o'clock. (7:00)","seven",["six","eight"]],["There are ___ months in a year.","twelve",["ten","seven"]],["My birthday is ___ May.","in",["on","at"]],["School starts ___ eight o'clock.","at",["in","on"]],["___ Monday I have English.","On",["In","At"]],["The first month of the year is ___.","January",["December","March"]],["After June comes ___.","July",["May","August"]],["It is half past ___. (3:30)","three",["four","two"]]]},
+ {t:'Comparatives: big — bigger',rule:'Сравниваем: big — bigger, tall — taller, fast — faster. An elephant is bigger than a mouse. Good — better.',w:W('big~🐘~большой|small~🐭~маленький|tall~🦒~высокий|fast~🐆~быстрый|slow~🐢~медленный|old~👴~старый|young~👶~молодой|long~🐍~длинный|heavy~🏋️~тяжёлый'),s:[["An elephant is ___ than a mouse.","bigger",["big","biggest"]],["A cheetah is ___ than a turtle.","faster",["fast","more fast"]],["A giraffe is ___ than a horse.","taller",["tall","more tall"]],["My grandpa is ___ than my dad.","older",["old","oldest"]],["A snake is ___ than a worm.","longer",["long","more long"]],["This book is ___ than that one.","better",["gooder","more good"]],["Summer is ___ than winter.","hotter",["hoter","hot"]],["A cat is ___ than a dog. (меньше)","smaller",["small","more small"]]]},
+ {t:'Jobs',rule:'Doctor — врач, teacher — учитель, farmer — фермер, pilot — лётчик. She is a doctor. He is an artist (перед гласной — an).',w:W('doctor~👩‍⚕️~врач|teacher~👩‍🏫~учитель|farmer~👨‍🌾~фермер|cook~👨‍🍳~повар|pilot~👨‍✈️~лётчик|driver~🚕~водитель|police officer~👮~полицейский|firefighter~👩‍🚒~пожарный|singer~👩‍🎤~певица|dentist~🦷~стоматолог'),s:[["A ___ works in a hospital.","doctor",["farmer","pilot"]],["A ___ flies a plane.","pilot",["driver","cook"]],["A ___ works at school.","teacher",["dentist","farmer"]],["My mum is ___ teacher.","a",["an","the"]],["He is ___ artist.","an",["a","the"]],["A ___ cooks food in a restaurant.","cook",["singer","doctor"]],["What ___ your father do?","does",["do","is"]],["She ___ a nurse.","is",["are","am"]]]},
+ {t:'Present Continuous',rule:'Что происходит сейчас: am/is/are + глагол с -ing. Look! She is running. I am reading now.',w:W('painting~🎨~рисует красками|running~🏃~бежит|swimming~🏊~плавает|reading~📖~читает|sleeping~😴~спит|eating~🍽️~ест|singing~🎤~поёт|playing~🎮~играет'),s:[["Look! The baby ___ sleeping.","is",["are","am"]],["I am ___ a book now.","reading",["read","reads"]],["They ___ playing football.","are",["is","am"]],["She is ___ in the sea.","swimming",["swiming","swim"]],["What are you ___?","doing",["do","does"]],["He ___ eating now. He is sleeping.","isn't",["aren't","not"]],["We are ___ a song.","singing",["sing","sings"]],["Is it raining? Yes, it ___.","is",["does","are"]]]}],
+4:[
+ {t:'Was / were',rule:'Прошедшее время глагола to be: I/he/she/it was, we/you/they were. I was at home yesterday.',w:W('yesterday~~вчера|last week~~на прошлой неделе|ago~~назад|cinema~🎬~кинотеатр|museum~🏛️~музей|beach~🏖️~пляж|party~🎉~праздник|holiday~🧳~каникулы'),s:[["I ___ at home yesterday.","was",["were","am"]],["They ___ at the beach last week.","were",["was","are"]],["___ she at school yesterday? Yes, she was.","Was",["Were","Is"]],["We ___ at the museum on Sunday.","were",["was","are"]],["It ___ cold yesterday.","was",["were","is"]],["The children ___ happy at the party.","were",["was","is"]],["He ___ not at the cinema.","was",["were","is"]],["Where ___ you last summer?","were",["was","are"]]]},
+ {t:'Past Simple: -ed',rule:'Правильные глаголы в прошедшем времени получают -ed: play — played, watch — watched. В вопросе и отрицании — did: Did you play? I didn\'t play.',w:W('played~~играл|watched~~смотрел|cleaned~~убирал|cooked~~готовил|visited~~навещал|helped~~помогал|walked~~гулял|jumped~~прыгал'),s:[["Yesterday I ___ football.","played",["play","plays"]],["She ___ her room last night.","cleaned",["clean","cleans"]],["We ___ our grandma on Sunday.","visited",["visit","visits"]],["He ___ his mum in the kitchen.","helped",["help","helps"]],["They ___ TV yesterday evening.","watched",["watch","watches"]],["I didn't ___ my homework.","finish",["finished","finishes"]],["___ you walk to school yesterday?","Did",["Do","Were"]],["The cat ___ onto the table.","jumped",["jump","jumps"]]]},
+ {t:'Past Simple: irregular',rule:'Неправильные глаголы надо запомнить: go — went, see — saw, eat — ate, have — had, come — came, buy — bought.',w:W('went~~пошёл (go)|saw~~увидел (see)|ate~~съел (eat)|had~~имел (have)|came~~пришёл (come)|bought~~купил (buy)|swam~~плавал (swim)|took~~взял (take)|wrote~~написал (write)|made~~сделал (make)'),s:[["Yesterday we ___ to the zoo.","went",["goed","go"]],["I ___ a big elephant.","saw",["seed","see"]],["She ___ an apple for lunch.","ate",["eated","eat"]],["We ___ a great time.","had",["haved","have"]],["He ___ a new bike last week.","bought",["buyed","buy"]],["They ___ in the sea.","swam",["swimmed","swim"]],["Grandma ___ to our house.","came",["comed","come"]],["I ___ a letter to my friend.","wrote",["writed","write"]]]},
+ {t:'Questions: who, what, where…',rule:'Who — кто, what — что, where — где, when — когда, why — почему, how — как, how many — сколько.',w:W('who~~кто|what~~что|where~~где|when~~когда|why~~почему|how~~как|how many~~сколько|which~~который'),s:[["___ is your name? — My name is Sadiya.","What",["Where","Who"]],["___ do you live? — In Tashkent.","Where",["When","What"]],["___ is your teacher? — Mrs Karimova.","Who",["What","How"]],["___ old are you? — I am nine.","How",["What","Who"]],["___ is your birthday? — In May.","When",["Where","Who"]],["___ are you sad? — Because I lost my toy.","Why",["How","When"]],["___ apples are there? — Five.","How many",["How much","What"]],["___ colour do you like? — Blue.","What",["Who","Where"]]]},
+ {t:'Future: going to, will',rule:'Планы: I am going to visit my granny. Предсказание: I think it will rain. Will not = won\'t.',w:W('tomorrow~~завтра|next week~~на следующей неделе|soon~~скоро|travel~🧳~путешествовать|plan~📋~план|future~🚀~будущее|weekend~~выходные'),s:[["Tomorrow I am going ___ visit my granny.","to",["for","at"]],["Look at the clouds! It is going to ___.","rain",["rains","raining"]],["She ___ going to buy a new dress.","is",["are","am"]],["I think it ___ be sunny tomorrow.","will",["is","are"]],["We are going to ___ to Samarkand next week.","travel",["travels","travelled"]],["They ___ going to play chess.","are",["is","am"]],["___ you help me? — Yes, I will.","Will",["Are","Do"]],["He won't ___ late.","be",["is","being"]]]},
+ {t:'Superlatives: the biggest',rule:'Самый: big — the biggest, tall — the tallest, good — the best, beautiful — the most beautiful.',w:W('the biggest~~самый большой|the smallest~~самый маленький|the tallest~~самый высокий|the fastest~~самый быстрый|the longest~~самый длинный|the best~~самый лучший|the worst~~самый плохой|the most beautiful~~самый красивый'),s:[["The elephant is the ___ animal on land.","biggest",["bigger","big"]],["The cheetah is the ___ animal.","fastest",["faster","most fast"]],["The giraffe is the ___ animal.","tallest",["taller","most tall"]],["This is the ___ day of my life!","best",["goodest","better"]],["The Nile is the ___ river in Africa.","longest",["longer","most long"]],["She is the ___ girl in our class.","tallest",["taller","tall"]],["A mouse is ___ than a cat.","smaller",["smallest","the smallest"]],["It is the ___ beautiful flower.","most",["more","much"]]]},
+ {t:'Some, any, much, many',rule:'Many — много (то, что можно посчитать: apples). Much — много (то, что нельзя посчитать: milk). Some — в утверждении, any — в вопросе и отрицании.',w:W('some~~немного, несколько|any~~какой-нибудь|much~~много (milk, water)|many~~много (apples, books)|a lot of~~много|a little~~немного|a few~~несколько'),s:[["How ___ apples have you got?","many",["much","any"]],["How ___ milk is in the glass?","much",["many","few"]],["There are ___ eggs in the fridge.","some",["any","much"]],["Is there ___ juice? No, there isn't.","any",["some","many"]],["I have ___ friends at school.","many",["much","little"]],["We need a ___ sugar.","little",["few","many"]],["There are a ___ books on the shelf.","few",["little","much"]],["Don't eat too ___ sweets!","many",["much","any"]]]},
+ {t:'Reading in English',rule:'Прочитай текст внимательно. Ответ на вопрос всегда есть в тексте. Можно перечитать.',w:[],s:[],tx:[
+  {t:'Sadiya lives in Tashkent. She is nine years old. She has got a brother and a sister. Every morning she gets up at seven and goes to school. Her favourite subject is Maths. After school she plays with her cat Murzik.',q:[["How old is Sadiya?","nine",["seven","eight"]],["What is her favourite subject?","Maths",["English","Art"]],["What is the name of her cat?","Murzik",["Max","Tom"]],["When does she get up?","at seven",["at eight","at six"]]]},
+  {t:'Last summer Tom went to the sea with his family. The weather was hot and sunny. Tom swam every day and built big sandcastles. One day he saw a dolphin! It was the best holiday ever.',q:[["Where did Tom go?","to the sea",["to the mountains","to the zoo"]],["What was the weather like?","hot and sunny",["cold and rainy","windy"]],["What animal did Tom see?","a dolphin",["a shark","a whale"]],["What did Tom build?","sandcastles",["houses","boats"]]]},
+  {t:'Ben has got a dog called Rex. Rex is big and brown. He can run very fast and catch a ball. Every evening Ben and Rex go to the park. Rex likes meat and bones, but he doesn\'t like cats.',q:[["What colour is Rex?","brown",["black","white"]],["Where do Ben and Rex go every evening?","to the park",["to school","to the shop"]],["What doesn't Rex like?","cats",["bones","meat"]],["What can Rex catch?","a ball",["a cat","a bird"]]]}]},
+ {t:'Exam practice',rule:'Это задания как на экзамене. Читай всё предложение до конца, потом выбирай ответ.',w:[],s:[]}]
+};
+
+/* ---------- Логика ---------- */
+const LRULE={1:'Ищи правило! Что повторяется? Что изменяется? Сначала подумай, потом отвечай.',2:'Найди закономерность. Сравни соседние числа: на сколько больше или меньше? Рисуй схему, если трудно.',3:'Логика — это доказательство. Проверь ответ: подходит ли он ко всем условиям?',4:'Задания как в Президентской школе: внимательно читай условие, ищи ловушку, проверяй себя.'};
+const KIDS=['Аня','Бобур','Вика','Гуля','Дима','Ева','Жасур','Зарина'];
+const CATS=[['фрукты',['🍎 яблоко','🍐 груша','🍌 банан','🍊 апельсин','🍇 виноград']],['овощи',['🥕 морковь','🥒 огурец','🍅 помидор','🥔 картошка','🧅 лук']],['животные',['🐶 собака','🐱 кошка','🐄 корова','🐴 лошадь','🐑 овца']],['птицы',['🐦 воробей','🦉 сова','🦆 утка','🐧 пингвин','🦜 попугай']],['транспорт',['🚗 машина','🚌 автобус','🚆 поезд','✈️ самолёт','🚢 корабль']],['одежда',['🧥 куртка','👗 платье','🧢 кепка','🧦 носки','🧣 шарф']],['насекомые',['🐞 божья коровка','🦋 бабочка','🐝 пчела','🐜 муравей','🦗 кузнечик']]];
+const ANALOG=[['кошка','котёнок','собака','щенок',['кот','будка','кость']],['корова','телёнок','лошадь','жеребёнок',['конюшня','седло','козлёнок']],['день','ночь','лето','зима',['весна','осень','жара']],['птица','гнездо','собака','будка',['хвост','кость','щенок']],['ручка','писать','ножницы','резать',['клеить','бумага','рисовать']],['врач','больница','учитель','школа',['урок','книга','ученик']],['глаз','видеть','ухо','слышать',['нос','говорить','голова']],['лёд','холодный','огонь','горячий',['дым','дрова','мокрый']],['машина','дорога','поезд','рельсы',['вагон','вокзал','небо']],['пчела','мёд','корова','молоко',['трава','ферма','сыр']],['большой','маленький','высокий','низкий',['длинный','широкий','толстый']],['рыба','плавать','птица','летать',['бегать','крыло','петь']]];
+const TRICK=[['Сколько концов у 4 палок?','8',['4','6','10']],['Что тяжелее: 1 кг ваты или 1 кг железа?','одинаково',['вата','железо']],['Тройка лошадей пробежала 30 км. Сколько километров пробежала каждая лошадь?','30',['10','90','3']],['3 кошки за 3 минуты ловят 3 мышки. Сколько мышек поймают 6 кошек за 3 минуты?','6',['3','9','12']],['Брат старше сестры на 3 года. На сколько лет он будет старше сестры через 5 лет?','3',['5','8','2']],['В семье 3 брата, и у каждого брата есть одна сестра. Сколько детей в семье?','4',['6','3','5']],['Если идёт дождь, Садия берёт зонт. Сегодня Садия вышла без зонта. Шёл ли дождь, когда она выходила?','нет',['да','нельзя узнать']],['Все розы — цветы. В вазе стоит роза. Значит, в вазе стоит …','цветок',['дерево','куст','не знаю']],['Петух снёс яйцо на крыше. В какую сторону оно скатится?','петухи не несут яиц',['влево','вправо','вниз']],['Бревно распилили на 5 частей. Сколько было распилов?','4',['5','6','3']],['Сколько месяцев в году имеют 28 дней?','12',['1','2','6']],['На столе 4 яблока. Одно разрезали пополам. Сколько яблок на столе?','4',['5','3','8']]];
+const DAYS=['понедельник','вторник','среда','четверг','пятница','суббота','воскресенье'];
+const DAYG=['был','был','была','был','была','была','было'];
+const LG={
+ seq:(R,L)=>{const t=L===1?0:L===2?R.int(0,1):L===3?R.int(1,3):R.int(2,5);let a=[];
+  if(t===0){const s=R.int(1,L===1?3:6),a0=R.int(1,10);for(let i=0;i<6;i++)a.push(a0+i*s)}
+  else if(t===1){const s=R.int(2,5),a0=R.int(s*6,s*6+20);for(let i=0;i<6;i++)a.push(a0-i*s)}
+  else if(t===2){const p=R.int(3,6),m=R.int(1,p-1);a=[R.int(1,10)];for(let i=1;i<6;i++)a.push(a[i-1]+(i%2?p:-m))}
+  else if(t===3){const a0=R.int(1,4);for(let i=0;i<6;i++)a.push(a0*2**i)}
+  else if(t===4){const a0=R.int(1,5),d=R.int(1,2);a=[a0];for(let i=1;i<6;i++)a.push(a[i-1]+i*d)}
+  else{const a0=R.int(1,2);for(let i=0;i<6;i++)a.push(a0*3**i)}
+  return num('Какое число будет следующим?',a.slice(0,5).join(',  ')+',  ?',a[5])},
+ pat:(R,L)=>{const S=R.pick([['🔴','🔵','🟡','🟢'],['⭐','🌙','☀️','☁️'],['🍎','🍐','🍌','🍇'],['🐱','🐶','🐰','🐻'],['▲','●','■','◆']]);const P=R.pick(L===1?['AB','ABC','AAB']:['ABB','AABB','ABCB','ABAC','ABC']);const m={A:S[0],B:S[1],C:S[2]};const n=R.int(6,8);const seq=[];for(let i=0;i<=n;i++)seq.push(m[P[i%P.length]]);return Object.assign(mc(R,'Что будет дальше?',seq.slice(0,n).join(' ')+' ?',seq[n],S.filter(x=>x!==seq[n])),{emoOpts:1})},
+ odd:(R,L)=>{if(L>=3&&R.chance(.4)){const k=R.pick([2,3,5]);const base=R.int(2,8);const ok=R.shuffle([1,2,3,4,5,6,7,8,9]).slice(0,3).map(x=>x*k*(L===4?base%3+1:1));let bad;do{bad=R.int(10,60)}while(bad%k===0);return mc(R,'Какое число лишнее?',R.shuffle([...ok,bad]).join(',  '),bad,ok)}
+  const [A,B]=R.shuffle(CATS).slice(0,2);const three=R.shuffle(A[1]).slice(0,3);const odd=R.pick(B[1]);return mc(R,'Что лишнее?','',odd,three,{col:1})},
+ order:(R,L)=>{const n=L<=2?3:4;const kids=R.shuffle(KIDS).slice(0,n);const at=R.pick([['выше','ниже','Кто выше всех?','Кто ниже всех?'],['старше','младше','Кто старше всех?','Кто младше всех?']]);const st=[];for(let i=0;i<n-1;i++){st.push(L>=2&&R.chance(.5)?`${kids[i+1]} ${at[1]}, чем ${kids[i]}.`:`${kids[i]} ${at[0]}, чем ${kids[i+1]}.`)}const top=R.chance(.5);return mc(R,top?at[2]:at[3],R.shuffle(st).join('\n'),top?kids[0]:kids[n-1],kids.filter((_,i)=>i!==(top?0:n-1)),{pre:1})},
+ legs:(R,L)=>{const A=[['кошки','кошек',4],['курицы','куриц',2],['собаки','собак',4],['утки','уток',2]];if(L>=3)A.push(['паука','пауков',8],['жука','жуков',6]);const [a,b]=R.shuffle(A).slice(0,2);const n1=R.int(1,L===1?3:5),n2=R.int(1,L===1?2:4);const f=(n,x)=>n===1?x[0]:x[1];return num('Подумай и посчитай',`Сколько всего лап у ${n1} ${f(n1,a)} и ${n2} ${f(n2,b)}?`,n1*a[2]+n2*b[2])},
+ week:(R,L)=>{const i=R.int(0,6);if(L===1||R.chance(.4)){const n=R.int(1,L===1?3:5);return mc(R,'Дни недели',`Сегодня ${DAYS[i]}. Какой день будет через ${n} ${pl(n,['день','дня','дней'])}?`,DAYS[(i+n)%7],R.shuffle(DAYS.filter((_,j)=>j!==(i+n)%7)))}
+  if(R.chance(.5))return mc(R,'Дни недели',`Вчера ${DAYG[i]} ${DAYS[i]}. Какой день будет завтра?`,DAYS[(i+2)%7],[DAYS[(i+1)%7],DAYS[(i+3)%7],DAYS[i]]);
+  return mc(R,'Дни недели',`Сегодня ${DAYS[i]}. Какой день будет послезавтра?`,DAYS[(i+2)%7],[DAYS[(i+1)%7],DAYS[(i+3)%7],DAYS[(i+6)%7]])},
+ analog:(R)=>{const x=R.pick(ANALOG);return mc(R,'Найди пару по смыслу',`${x[0]} → ${x[1]}\n${x[2]} → ?`,x[3],x[4],{pre:1})},
+ balance:(R,L)=>{const [X,Y,Z]=R.pick([['🍉','🍊','🍒'],['🐘','🐶','🐭'],['🎃','🍎','🍓']]);if(L>=3&&R.chance(.5)){const a=R.int(2,3),b=R.int(2,4);return num('Весы',`${X} = ${Array(a).fill(Y).join(' ')}\n${Y} = ${Array(b).fill(Z).join(' ')}\nСколько ${Z} весят столько же, сколько один ${X}?`,a*b,{pre:1})}
+  const k=R.int(2,4),n=R.int(2,3);return num('Весы',`${X} = ${Array(k).fill(Y).join(' ')}\nСколько ${Y} весят столько же, сколько ${Array(n).fill(X).join(' ')}?`,k*n,{pre:1})},
+ grid:(R,L)=>{const mul=L>=4&&R.chance(.5);const rows=[];for(let i=0;i<3;i++){const a=R.int(2,mul?9:30),b=R.int(2,mul?9:30);rows.push([a,b,mul?a*b:a+b])}const ans=rows[2][2];const txt=rows.map((r,i)=>i===2?`${r[0]}   ${r[1]}   ?`:r.join('   ')).join('\n');return num('В каждой строке одно и то же правило. Какое число вместо «?»',txt,ans,{pre:1})},
+ trick:(R,L)=>{const pool=L>=4?TRICK:TRICK.slice(0,10);const x=R.pick(pool);return mc(R,'Задача на смекалку',x[0],x[1],x[2])},
+ olymp:(R)=>MG.olymp(R)
+};
+const LGEN={1:['seq','pat','odd','order','legs','week'],2:['seq','pat','odd','order','legs','analog','balance','week'],3:['seq','odd','order','analog','balance','grid','trick','legs'],4:['seq','order','grid','trick','balance','analog','olymp','odd']};
+
+/* ---------- Русский язык и чтение ---------- */
+const RRULE={1:'Читай слово по слогам. Сколько в слове гласных — столько и слогов: ма-ши-на (3). ЖИ и ШИ пиши с буквой И, ЧА и ЩА — с буквой А, ЧУ и ЩУ — с буквой У.',2:'Имена, фамилии, названия городов и стран пишем с большой буквы: Садия, Ташкент, Узбекистан. Начало предложения — тоже с большой буквы.',3:'Существительное отвечает на вопросы кто? что? Глагол — что делать? что делает? Прилагательное — какой? какая? какое?',4:'Синонимы — слова, близкие по смыслу (храбрый — смелый). Антонимы — слова с противоположным смыслом (день — ночь).'};
+const RW1=['мама','папа','лиса','рыба','луна','сова','утка','роза','зима','лето','река','гора','школа','книга','ручка','парта','окно','стол','стул','банан','лимон','арбуз','ворона','собака','корова','машина','кошка','мышка','шапка','сумка'];
+const RW2=['берёза','морковь','капуста','тетрадь','огурец','помидор','медведь','ученик','учитель','город','деревня','яблоко','молоко','карандаш','пенал','ребята','воробей','сорока','мороз','одежда','посуда','девочка','мальчик','дорога','погода'];
+const RUEMO=[['арбуз','🍉'],['банан','🍌'],['утка','🦆'],['кот','🐱'],['слон','🐘'],['рыба','🐟'],['лиса','🦊'],['мяч','⚽'],['дом','🏠'],['ёжик','🦔'],['заяц','🐰'],['гриб','🍄'],['зонт','☂️'],['чашка','☕'],['шар','🎈'],['яблоко','🍎'],['пчела','🐝'],['торт','🎂'],['луна','🌙'],['нос','👃'],['ухо','👂'],['волк','🐺'],['сова','🦉'],['ключ','🔑'],['улитка','🐌'],['ведро','🪣'],['фонарик','🔦'],['кит','🐳']];
+const ZHI=[['жираф','жыраф'],['шина','шына'],['машина','машына'],['чашка','чяшка'],['роща','рощя'],['чудо','чюдо'],['щука','щюка'],['лыжи','лыжы'],['ежи','ежы'],['часы','чясы'],['туча','тучя'],['малыши','малышы'],['чулки','чюлки'],['пищу','пищю']];
+const CAP=[['Ташкент','ташкент'],['Садия','садия'],['Самарканд','самарканд'],['Узбекистан','узбекистан'],['Мурзик','мурзик'],['Бухара','бухара'],['Мама пришла домой.','мама пришла домой.'],['Дети играют в парке.','дети играют в парке.']];
+const SENTS=['Мама варит суп.','Кот спит на диване.','Дети играют в парке.','Садия читает интересную книгу.','Весной прилетели птицы.','Папа купил новый мяч.','Мы гуляли в саду.','Осенью листья желтеют и падают.','Бабушка испекла вкусный пирог.','Утром светит яркое солнце.','Мальчик рисует красками.','Ночью на небе много звёзд.'];
+const POS=[['кошка',0],['река',0],['школа',0],['мальчик',0],['дерево',0],['солнце',0],['бежать',1],['читает',1],['прыгать',1],['рисует',1],['пишет',1],['поёт',1],['думать',1],['красный',2],['весёлый',2],['большой',2],['зелёная',2],['тёплое',2],['быстрый',2],['синее',2]];
+const POSN=['имя существительное','глагол','имя прилагательное'];
+const ANT=[['день','ночь'],['горячий','холодный'],['большой','маленький'],['высокий','низкий'],['весёлый','грустный'],['быстро','медленно'],['открыть','закрыть'],['лето','зима'],['друг','враг'],['светлый','тёмный'],['старый','новый'],['длинный','короткий'],['добрый','злой'],['громко','тихо']];
+const SYN=[['большой','огромный'],['смелый','храбрый'],['грустный','печальный'],['красивый','прекрасный'],['друг','товарищ'],['весёлый','радостный'],['бежать','мчаться'],['маленький','крошечный'],['говорить','беседовать'],['умный','сообразительный']];
+const RTX=[
+ {g:1,t:'Кот Мурзик. У Садии есть кот. Его зовут Мурзик. Мурзик рыжий и пушистый. Утром он пьёт молоко. Днём кот спит на окне. Вечером Мурзик играет с мячиком.',q:[['Как зовут кота?','Мурзик',['Барсик','Пушок']],['Что кот делает днём?','спит на окне',['играет','пьёт молоко']],['Какого цвета кот?','рыжий',['серый','чёрный']]]},
+ {g:1,t:'Весна. Пришла весна. Тает снег. Бегут ручьи. Прилетели птицы. Дети пускают кораблики.',q:[['Какое время года пришло?','весна',['зима','осень']],['Кто прилетел?','птицы',['бабочки','самолёты']],['Что пускают дети?','кораблики',['воздушных змеев','мячи']]]},
+ {g:1,t:'В парке. Мы с папой пошли в парк. В парке много деревьев. Папа купил мне шарик. Шарик красный. Мы кормили уток у пруда.',q:[['Какого цвета шарик?','красный',['синий','зелёный']],['Кого кормили у пруда?','уток',['голубей','рыбок']],['С кем девочка пошла в парк?','с папой',['с мамой','с бабушкой']]]},
+ {g:2,t:'Ёжик. Осенью ёжик собирает листья и грибы. Он несёт их в свою норку. Зимой ёжик спит. Он просыпается весной, когда становится тепло.',q:[['Что делает ёжик зимой?','спит',['гуляет','собирает грибы']],['Когда ёжик просыпается?','весной',['осенью','летом']],['Куда ёжик несёт листья?','в норку',['в лес','на дерево']]]},
+ {g:2,t:'Самарканд. Летом мы ездили в Самарканд. Там мы видели площадь Регистан. Она очень красивая. Купола у старинных зданий голубые, как небо. Бабушка купила нам вкусные лепёшки.',q:[['Куда ездила семья?','в Самарканд',['в Бухару','в Хиву']],['Какого цвета купола?','голубые',['зелёные','золотые']],['Что купила бабушка?','лепёшки',['игрушки','мороженое']]]},
+ {g:3,t:'Умная ворона. Ворона хотела пить. Она нашла кувшин, но воды в нём было мало, и клювом до неё было не достать. Ворона стала бросать в кувшин камешки. Вода поднялась, и ворона напилась.',q:[['Почему ворона не могла сразу напиться?','воды было мало',['кувшин был закрыт','вода была холодной']],['Что ворона бросала в кувшин?','камешки',['ветки','листья']],['Какая ворона в рассказе?','умная',['ленивая','злая']]]},
+ {g:3,t:'Хлопок. В Узбекистане растёт хлопок. Осенью на полях раскрываются белые коробочки, похожие на снег. Из хлопка делают нитки и ткань, а из ткани шьют одежду. Поэтому хлопок называют белым золотом.',q:[['Когда раскрываются белые коробочки?','осенью',['весной','зимой']],['Что делают из хлопка?','нитки и ткань',['стекло','бумагу для книг']],['Как называют хлопок?','белым золотом',['белым снегом','белым облаком']]]},
+ {g:4,t:'Солнечная система. Земля — третья планета от Солнца. Она облетает Солнце за один год, а вокруг своей оси поворачивается за сутки. Луна — спутник Земли. Самая большая планета — Юпитер.',q:[['Какая по счёту от Солнца планета Земля?','третья',['первая','пятая']],['За сколько времени Земля облетает Солнце?','за один год',['за сутки','за месяц']],['Какая планета самая большая?','Юпитер',['Марс','Земля']]]},
+ {g:4,t:'Пчёлы. Пчёлы живут в ульях большими семьями. Одни пчёлы собирают нектар с цветов, другие строят соты из воска, третьи охраняют улей. Из нектара пчёлы делают мёд.',q:[['Где живут пчёлы?','в ульях',['в норах','в гнёздах']],['Из чего пчёлы делают мёд?','из нектара',['из листьев','из воды']],['Из чего строят соты?','из воска',['из глины','из веток']]]}];
+const VOW='аеёиоуыэюя',CONS='бвгджзклмнпрстфхцчшщ';
+const RG={
+ miss:(R,g)=>{const Wd=g<=1?RW1:RW2;const w=R.pick(Wd);let i;do{i=R.int(0,w.length-2)}while('ьъй'.includes(w[i]));const L=w[i],pool=(VOW.includes(L)?VOW:CONS).replace('ё','').split('');const ds=R.shuffle(pool.filter(x=>x!==L&&!Wd.includes(w.slice(0,i)+x+w.slice(i+1)))).slice(0,3);return mc(R,'Какая буква пропущена?',w.slice(0,i)+'_'+w.slice(i+1),L,ds)},
+ syll:(R,g)=>{const w=R.pick(g<=1?RW1:RW2);let n=0;for(const c of w)if(VOW.includes(c))n++;return num('Сколько слогов в слове?',w,n)},
+ first:(R)=>{const x=R.pick(RUEMO);const L=x[0][0].toUpperCase();const ds=R.shuffle('АБВГДЕЖЗИКЛМНОПРСТУФЧШЯ'.split('').filter(c=>c!==L)).slice(0,3);return mc(R,'С какой буквы начинается это слово?',x[1],L,ds,{emo:1})},
+ abc:(R)=>{const A='абвгдеёжзийклмнопрстуфхцчшщъыьэюя';let i;do{i=R.int(0,A.length-2)}while('ъыьй'.includes(A[i])||'ъыьй'.includes(A[i+1]));return mc(R,'Алфавит',`Какая буква идёт после буквы «${A[i].toUpperCase()}»?`,A[i+1].toUpperCase(),[A[i].toUpperCase(),A[Math.max(0,i-1)].toUpperCase(),A[Math.min(A.length-1,i+2)].toUpperCase()])},
+ zhi:(R)=>{const x=R.pick(ZHI);return mc(R,'Как написать правильно?','',x[0],[x[1]])},
+ cap:(R)=>{const x=R.pick(CAP);return mc(R,'Как написать правильно?','',x[0],[x[1]])},
+ words:(R)=>{const s=R.pick(SENTS);return num('Сколько слов в предложении?',s,s.replace(/[.,!?]/g,'').split(/\s+/).length)},
+ pos:(R)=>{const x=R.pick(POS);return mcFixed(`Какая это часть речи: «${x[0]}»?`,'',POSN,POSN[x[1]])},
+ anto:(R)=>{const x=R.pick(ANT);const ds=R.shuffle(ANT.filter(y=>y!==x).map(y=>y[1])).slice(0,3);return mc(R,'Подбери слово с противоположным значением',x[0],x[1],ds)},
+ syn:(R)=>{const x=R.pick(SYN);const ds=R.shuffle(SYN.filter(y=>y!==x).map(y=>y[1])).slice(0,3);return mc(R,'Подбери слово, близкое по значению',x[0],x[1],ds)},
+ text:(R,g)=>{const pool=RTX.filter(t=>t.g<=g);const best=pool.filter(t=>t.g===g);const t=R.pick(best.length&&R.chance(.7)?best:pool);const q=R.pick(t.q);return mc(R,q[0],'',q[1],q[2],{passage:t.t})}
+};
+const RGEN={1:['miss','syll','first','abc','zhi','words','text'],2:['miss','zhi','cap','syll','words','text','anto'],3:['pos','anto','syn','miss','text','words'],4:['pos','anto','syn','text','text','words']};
+
+/* ---------- Английский: генерация заданий ---------- */
+function engPool(g,mi){const arr=ENG[g];if(mi>8)return {w:arr.flatMap(m=>m.w),s:arr.flatMap(m=>m.s||[]),tx:arr.flatMap(m=>m.tx||[])};const c=arr[mi];let w=c.w.slice(),s=(c.s||[]).slice(),tx=(c.tx||[]).slice();if(!w.length){w=arr.slice(0,mi).flatMap(m=>m.w)}if(mi===8&&g===4){s=ENG[4].flatMap(m=>m.s||[]);tx=ENG[4][7].tx}else if(!s.length&&g>=3){s=arr.slice(0,mi).flatMap(m=>m.s||[])}return {w,s,tx,L:c.L}}
+function engQ(R,type,P,all){const W=P.w;
+ if((type==='pic'||type==='word'||type==='listen'||type==='letter')&&!W.some(x=>x.e))type=R.chance(.5)?'ru2en':'en2ru';
+ if(type==='sent'&&!P.s.length)type='ru2en';if(type==='text'&&!P.tx.length)type=P.s.length?'sent':'en2ru';
+ const pool=all.filter((x,i,a)=>a.findIndex(y=>y.en===x.en)===i);
+ if(type==='pic'||type==='word'||type==='listen'||type==='letter'){const w=R.pick(W.filter(x=>x.e));
+  if(type==='letter'){let ww=w;if(P.L){const c=W.filter(x=>x.e&&P.L.includes(x.en[0].toUpperCase()));if(c.length)ww=R.pick(c)}const L=ww.en[0].toUpperCase();const ds=R.shuffle('ABCDEFGHIJKLMNOPRSTUVWYZ'.split('').filter(x=>x!==L)).slice(0,3);return mc(R,'С какой буквы начинается слово?',ww.e+'   _'+ww.en.slice(1),L,ds,{say:ww.en})}
+  const others=R.shuffle(pool.filter(x=>x.e&&x.e!==w.e&&x.en!==w.en));
+  if(type==='pic')return mc(R,'Как это по-английски?',w.e,w.en,others.slice(0,3).map(x=>x.en),{after:w.en,emo:1});
+  const eo=[];for(const o of others){if(!eo.includes(o.e))eo.push(o.e);if(eo.length===3)break}
+  if(type==='word')return mc(R,'Выбери картинку к слову',w.en,w.e,eo,{say:w.en,emoOpts:1});
+  return mc(R,'Послушай и выбери картинку','🔊',w.e,eo,{listen:w.en,emoOpts:1})}
+ if(type==='ru2en'||type==='en2ru'){const w=R.pick(W);const others=R.shuffle(pool.filter(x=>x.en!==w.en&&x.ru!==w.ru));if(type==='ru2en')return mc(R,'Как сказать по-английски?',`«${w.ru}»`,w.en,others.slice(0,3).map(x=>x.en),{after:w.en});return mc(R,`Что значит это слово?`,w.en,w.ru,others.slice(0,3).map(x=>x.ru),{say:w.en})}
+ if(type==='sent'){const s=R.pick(P.s);return mc(R,'Вставь пропущенное слово',s[0],s[1],s[2],{after:s[0].replace(/\s*\(.*?\)\s*$/,'').replace('___',s[1])})}
+ const t=R.pick(P.tx),q=R.pick(t.q);return mc(R,q[0],'',q[1],q[2],{passage:t.t,ptitle:'Read the text'})}
+const EGEN={1:['pic','word','listen','letter','pic','listen','word','pic'],2:['pic','word','ru2en','en2ru','sent','listen','sent','pic'],3:['sent','sent','sent','ru2en','en2ru','pic','sent','word'],4:['sent','sent','text','sent','ru2en','en2ru','text','sent']};
+
+/* ---------- Расписание и сборка урока ---------- */
+const SUBJ={math:{n:'Математика',ic:'+'},eng:{n:'English',ic:'Aa'},logic:{n:'Логика',ic:'?'},read:{n:'Русский язык',ic:'Б'},test:{n:'Проверочная',ic:'★'}};
+function weekPlan(g,exam,w){if(w===0)return[];if(w===6)return['test'];if(exam)return w%2?['math','logic','eng']:['math','eng','logic'];
+ if(g<=2)return {1:['math','eng','logic'],2:['math','read','eng'],3:['math','eng','logic'],4:['math','read','logic'],5:['math','eng','logic']}[w];
+ return {1:['math','eng','logic'],2:['math','read','eng'],3:['math','eng','logic'],4:['math','eng','logic'],5:['math','read','logic']}[w]}
+function minutes(s,g){return s==='math'?(g<=2?20:25):s==='test'?30:15}
+function ctxOf(d,base){const y=d.getFullYear(),m=d.getMonth(),sy=m>=8?y:y-1,grade=base+(sy-2026),mi=(m-8+12)%12;const g=Math.min(4,Math.max(1,grade));return {grade,g,mi,sy,exam:grade>4||(grade===4&&mi>8),out:grade<1}}
+function mathCfgs(g,mi,exam){if(exam)return {cur:MATH[4][8],list:[MATH[4][8],MATH[4][7],MATH[4][5],MATH[3][7]]};if(mi>8)return {cur:{t:'Летнее повторение',rule:'Летом повторяем всё, что прошли за год. По 20 минут в день — и в новом классе будет легко.'},list:MATH[g]};return {cur:MATH[g][mi],list:[MATH[g][mi]],prev:mi>0?MATH[g][mi-1]:(g>1?MATH[g-1][8]:null)}}
+function pickGen(R,c){const src=(c.prev&&R.chance(.2))?c.prev:R.pick(c.list);return R.pick(src.g)}
+function mathQ(R,c){const [k,p]=pickGen(R,c);return MG[k](R,p)}
+function engQq(R,g,mi,exam){const gg=exam?4:g,mm=exam?8:mi;const P=engPool(gg,mm);let all=P.w.slice();if(all.length<8)all=all.concat(ENG[gg].flatMap(m=>m.w));if(all.length<8&&gg>1)all=all.concat(ENG[gg-1].flatMap(m=>m.w));let type=R.pick(EGEN[gg]);
+ if(!exam&&mi<=8&&R.chance(.25)&&(mi>0||gg>1)){const pm=mi>0?mi-1:8,pg=mi>0?gg:gg-1;const PP=engPool(pg,pm);if(PP.w.length>=4||PP.s.length)return engQ(R,type,PP,all.concat(PP.w))}
+ return engQ(R,type,P,all)}
+function logicQ(R,g){return LG[R.pick(LGEN[g])](R,g)}
+function readQ(R,g){return RG[R.pick(RGEN[g])](R,g)}
+function engTopic(g,mi,exam){if(exam)return 'Exam practice';if(mi>8)return 'Summer review';return ENG[g][mi].t}
+function lastSat(d){return d.getDay()===6&&d.getDate()+7>new Date(d.getFullYear(),d.getMonth()+1,0).getDate()}
+function buildLesson(iso,s,base){const [y,m,dd]=iso.split('-').map(Number);const d=new Date(y,m-1,dd);const c=ctxOf(d,base);const R=RNG(iso+'|'+s+'|'+base);const g=c.g,mi=c.mi;const mc_=mathCfgs(g,mi,c.exam);const qs=[];const seen=new Set();
+ const add=(fn)=>{for(let t=0;t<12;t++){const q=fn();const key=q.q+'|'+q.big+'|'+(q.passage||'');if(!seen.has(key)){seen.add(key);qs.push(q);return}}qs.push(fn())};
+ let title,topic,rule;
+ if(s==='math'){const n=g<=2?10:12;for(let i=0;i<n;i++)add(()=>mathQ(R,mc_));title='Математика';topic=mc_.cur.t;rule=mc_.cur.rule}
+ else if(s==='eng'){for(let i=0;i<8;i++)add(()=>engQq(R,g,mi,c.exam));title='English';topic=engTopic(g,mi,c.exam);rule=c.exam?ENG[4][8].rule:mi>8?'Летом повторяем английские слова и правила всего года.':ENG[g][mi].rule}
+ else if(s==='logic'){const L=c.exam?4:g;for(let i=0;i<6;i++)add(()=>logicQ(R,L));title='Логика';topic=c.exam?'Логика: задания экзамена':'Логика и смекалка';rule=LRULE[L]}
+ else if(s==='read'){for(let i=0;i<6;i++)add(()=>readQ(R,g));title='Русский язык';topic='Чтение и письмо';rule=RRULE[g]}
+ else{const big=lastSat(d);const n=(g<=2?15:20)+(big?5:0);const L=c.exam?4:g;for(let i=0;i<n;i++){const r=i%10;add(()=>c.exam?(r<5?mathQ(R,mc_):r<8?logicQ(R,L):engQq(R,g,mi,true)):(r<5?mathQ(R,mc_):r<7?engQq(R,g,mi,false):r<9?logicQ(R,L):readQ(R,g)))}
+  title=c.exam?'Пробный экзамен':big?'Контрольная за месяц':'Проверочная за неделю';topic=c.exam?'Математика, логика, английский':'Всё, что прошли';rule=c.exam?'Как на настоящем экзамене: сначала математика, потом логика и английский. Не торопись и проверяй себя.':'Проверим, что ты запомнила за '+(big?'месяц':'неделю')+'. Ошибки — это не страшно: мама или папа посмотрят их вместе с тобой.'}
+ return {iso,s,title,topic,rule,mins:minutes(s,g),qs,grade:c.grade,g,mi,exam:c.exam}}
+if(typeof module!=='undefined')module.exports={buildLesson,ctxOf,weekPlan,MATH,ENG,mathCfgs,engTopic,MONTHS};
+
+</script>
+<script>
+const STORE='sadiya-app-v1';
+let S=(()=>{const d={name:'Садия',base:1,limit:60,done:{},time:{},extra:{},started:null};try{const r=localStorage.getItem(STORE);if(r)return Object.assign(d,JSON.parse(r))}catch(e){}return d})();
+function save(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}}
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const parseD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const today=()=>iso(new Date());
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const V=document.getElementById('view');
+let view={name:'day',date:today()},lesson=null,planG=null,openM=new Set(),confirmQuit=false,confirmReset=false;
+
+/* Озвучка английских слов: в приложении Android — через мост AndroidTTS, в браузере — через speechSynthesis */
+function canSpeak(){return !!(window.AndroidTTS||('speechSynthesis' in window))}
+function speak(t){try{if(window.AndroidTTS&&window.AndroidTTS.speak){window.AndroidTTS.speak(t);return}if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-GB';u.rate=.85;const vs=speechSynthesis.getVoices();const v=vs.find(x=>/^en[-_]GB/i.test(x.lang))||vs.find(x=>/^en/i.test(x.lang));if(v)u.voice=v;speechSynthesis.speak(u)}}catch(e){}}
+
+function planFor(ds){const d=parseD(ds),c=ctxOf(d,S.base);return c.out?[]:weekPlan(c.g,c.exam,d.getDay())}
+function rec(ds,s){return S.done[ds+'|'+s]}
+function starStr(n){return '★'.repeat(n)+'☆'.repeat(3-n)}
+function usedSec(){return S.time[today()]||0}
+function limitSec(){return (S.limit+(S.extra[today()]||0))*60}
+function topicOf(ds,s){const d=parseD(ds),c=ctxOf(d,S.base);if(s==='math')return mathCfgs(c.g,c.mi,c.exam).cur.t;if(s==='eng')return engTopic(c.g,c.mi,c.exam);if(s==='logic')return c.exam?'Логика: задания экзамена':'Логика и смекалка';if(s==='read')return 'Чтение и письмо';return c.exam?'Математика, логика, английский':lastSat(d)?'Всё, что прошли за месяц':'Задания по всем предметам недели'}
+function nameOf(s,ds){if(s==='test'){const d=parseD(ds),c=ctxOf(d,S.base);return c.exam?'Пробный экзамен':lastSat(d)?'Контрольная':'Проверочная'}return SUBJ[s].n}
+
+function tileHTML(ds,s){const d=parseD(ds),c=ctxOf(d,S.base),r=rec(ds,s);return `<button class="tile s-${s} ${r?'done':''}" data-start="${ds}|${s}">
+ <span class="badge" aria-hidden="true">${SUBJ[s].ic}</span>
+ <span><span class="tname">${esc(nameOf(s,ds))}</span><span class="ttopic">${esc(topicOf(ds,s))}</span></span>
+ <span class="tmeta">${minutes(s,c.g)} мин<br>${r?`<span class="stars" aria-label="${r.st} из 3 звёзд">${starStr(r.st)}</span>`:'<span class="go">Начать</span>'}</span></button>`}
+
+function missedDays(){const out=[];const t=new Date();for(let k=1;k<=21&&out.length<6;k++){const d=new Date(t.getFullYear(),t.getMonth(),t.getDate()-k);const ds=iso(d);if(S.started&&ds<S.started)break;const p=planFor(ds);if(!p.length)continue;const left=p.filter(s=>!rec(ds,s)).length;if(left)out.push([ds,left,d])}return out}
+
+function dayHTML(ds){const d=parseD(ds),c=ctxOf(d,S.base),isT=ds===today();const p=c.out?[]:weekPlan(c.g,c.exam,d.getDay());const cfg=mathCfgs(c.g,c.mi,c.exam);
+ let h=`<header class="hero"><span class="eyebrow">${d.getDate()} ${MON_GEN[d.getMonth()]} ${d.getFullYear()} · ${WD[d.getDay()]}${isT?' · Классная работа':''}</span>
+ <h1>${isT?`Привет, ${esc(S.name)}!`:`${d.getDate()} ${MON_GEN[d.getMonth()]}`}</h1>
+ <p class="sub">${c.out?'Программа начнётся 1 сентября '+(2026+(1-S.base)):`${c.exam?'Подготовка к экзамену':c.grade+' класс'} · ${MONTHS[c.mi]} · ${esc(cfg.cur.t)}`}</p>`;
+ if(isT){const u=Math.round(usedSec()/60),L=S.limit+(S.extra[today()]||0);h+=`<div class="timebar"><div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="${L}" aria-valuenow="${u}"><div class="fill" style="width:${Math.min(100,u/L*100)}%"></div></div><small>Сегодня занималась ${u} из ${L} минут</small></div>`}
+ h+=`</header>`;
+ if(!isT)h+=`<div class="row" style="margin:-10px 0 16px"><button class="ghost" data-act="today">← К сегодняшнему дню</button></div>`;
+ if(p.length){h+=`<div class="list">${p.map(s=>tileHTML(ds,s)).join('')}</div>`;const all=p.every(s=>rec(ds,s));if(all)h+=`<div class="note" style="margin-top:14px"><p><b>Все уроки этого дня выполнены!</b> ${isT?'Отдыхай и играй — завтра продолжим.':''}</p></div>`}
+ else if(!c.out)h+=`<div class="note"><h2>Воскресенье — выходной</h2><p>Сегодня уроков нет. Погуляй, почитай любимую книжку, порисуй. В понедельник продолжим!</p></div>`;
+ else h+=`<div class="note"><p>На эту дату уроков нет. Откройте вкладку «План», чтобы выбрать день.</p></div>`;
+ if(isT){const m=missedDays();if(m.length)h+=`<section class="section"><span class="label">Можно догнать</span><div class="chips">${m.map(([x,n,dd])=>`<button class="chip" data-day="${x}">${dd.getDate()} ${MON_GEN[dd.getMonth()]} · ${n} ${pl(n,['урок','урока','уроков'])}</button>`).join('')}</div></section>`}
+ return h}
+
+/* ---------- Урок ---------- */
+function startLesson(ds,s){if(usedSec()>=limitSec()){view={name:'limit'};render();return}const L=buildLesson(ds,s,S.base);lesson={L,i:-1,score:0,tries:0,input:'',t0:Date.now(),res:[],locked:false};confirmQuit=false;view={name:'lesson'};render()}
+function qHTML(){const {L,i}=lesson,q=L.qs[i];const s=L.s;
+ const dots=L.qs.map((_,j)=>`<i class="${j<i?(lesson.res[j]===1?'ok':lesson.res[j]===.5?'half':'no'):j===i?'now':''}"></i>`).join('');
+ let h=`<div class="s-${s}"><header class="lbar"><button class="x" data-act="quit" aria-label="Выйти из урока">×</button><div class="dots" aria-hidden="true">${dots}</div><span class="lnum">${i+1}/${L.qs.length}</span></header>`;
+ if(confirmQuit)h+=`<div class="confirm"><p style="margin:0">Выйти из урока? Ответы этого урока не сохранятся.</p><div class="row"><button class="next" data-act="quit-yes">Выйти</button><button class="ghost" data-act="quit-no">Продолжить урок</button></div></div>`;
+ h+=`<article class="qcard"><div class="qhead"><span class="badge" aria-hidden="true">${SUBJ[s].ic}</span>${esc(L.title)}</div>`;
+ if(q.passage)h+=`<div class="passage"><b>${esc(q.ptitle||'Прочитай текст')}</b>${esc(q.passage)}</div>`;
+ h+=`<p class="qtext">${esc(q.q)}</p>`;
+ if(q.listen){h+=canSpeak()?`<div class="listen"><button data-say="${esc(q.listen)}" aria-label="Послушать слово">🔊</button></div>`:`<div class="big">${esc(q.listen)}</div>`}
+ else if(q.big){const long=String(q.big).length>26&&!q.pre&&!q.emo;h+=`<div class="big ${q.pre?'pre':''} ${q.emo?'emo':''} ${long?'long':''}">${esc(q.big)}</div>`}
+ if(q.say&&canSpeak())h+=`<div class="sayrow"><button class="say" data-say="${esc(q.say)}">🔊 Послушать</button></div>`;
+ if(q.k==='num'){h+=`<div class="answer ${lesson.input?'':'empty'}" id="ans" aria-live="polite">${lesson.input||'?'}</div>`;
+  if(!lesson.locked)h+=`<div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-key="${n}">${n}</button>`).join('')}<button data-key="back" aria-label="Стереть">⌫</button><button data-key="0">0</button><button class="ok" data-key="ok">Проверить</button></div>`}
+ else{const emo=q.emoOpts||q.emo&&q.opts.every(o=>/^\p{Extended_Pictographic}/u.test(o));const sym=q.opts.every(o=>o.length<=2&&!/\p{L}/u.test(o));const col=q.col||q.opts.some(o=>o.length>16);
+  h+=`<div class="opts ${emo?'emo':''} ${sym&&!emo?'sym':''} ${col?'col':''}">${q.opts.map((o,j)=>`<button data-opt="${j}" class="${lesson.mark&&lesson.mark[j]||''}" ${lesson.locked||lesson.mark&&lesson.mark[j]==='wrong'?'disabled':''}>${esc(o)}</button>`).join('')}</div>`}
+ if(lesson.fb)h+=`<div class="fb ${lesson.fb.ok?'ok':'bad'}" role="status"><span>${esc(lesson.fb.t)}</span>${lesson.locked?`<button class="next" data-act="next">${i+1<L.qs.length?'Дальше →':'Готово'}</button>`:''}</div>`;
+ return h+`</article></div>`}
+function ruleHTML(){const L=lesson.L;return `<div class="s-${L.s}"><header class="lbar"><button class="x" data-act="quit-yes" aria-label="Назад">×</button><div></div><span class="lnum">${L.mins} мин</span></header>
+ <article class="qcard rule"><div class="qhead"><span class="badge" aria-hidden="true">${SUBJ[L.s].ic}</span>${esc(L.title)}</div><h2>${esc(L.topic)}</h2><p>${esc(L.rule)}</p><p class="muted" style="font-size:15px">${L.qs.length} ${pl(L.qs.length,['задание','задания','заданий'])} · примерно ${L.mins} минут</p><button class="cta" data-act="begin">Начать урок</button></article></div>`}
+function check(val){const q=lesson.L.qs[lesson.i];const ok=q.k==='num'?String(val)===q.a:val===q.a;
+ if(ok){const pts=lesson.tries?0.5:1;lesson.score+=pts;lesson.res[lesson.i]=pts;lesson.locked=true;lesson.fb={ok:1,t:lesson.tries?'Верно, со второй попытки!':R_PRAISE()};if(q.k==='mc'){lesson.mark=lesson.mark||{};lesson.mark[val]='right'}if(q.after&&canSpeak())speak(q.after)}
+ else if(!lesson.tries){lesson.tries=1;lesson.fb={ok:0,t:'Не совсем. Подумай и попробуй ещё раз!'};if(q.k==='mc'){lesson.mark=lesson.mark||{};lesson.mark[val]='wrong'}lesson.input='';render();const c=V.querySelector('.qcard');if(c)c.classList.add('shake');return}
+ else{lesson.res[lesson.i]=0;lesson.locked=true;const right=q.k==='num'?q.a:q.opts[q.a];lesson.fb={ok:0,t:'Правильный ответ: '+right};if(q.k==='mc'){lesson.mark=lesson.mark||{};lesson.mark[val]='wrong';lesson.mark[q.a]='right'}else lesson.input=q.a}
+ render()}
+const PRAISE=['Верно! Молодец!','Правильно!','Отлично!','Умница!','Так держать!','Супер!'];let pi=0;function R_PRAISE(){pi=(pi+1)%PRAISE.length;return PRAISE[pi]}
+function nextQ(){lesson.i++;lesson.tries=0;lesson.input='';lesson.fb=null;lesson.locked=false;lesson.mark=null;if(lesson.i>=lesson.L.qs.length){finish();return}render();window.scrollTo(0,0)}
+function addTime(sec){const t=today();S.time[t]=(S.time[t]||0)+sec}
+function finish(){const L=lesson.L,sec=Math.min(3600,Math.round((Date.now()-lesson.t0)/1000)),pct=lesson.score/L.qs.length;const st=pct>=.9?3:pct>=.7?2:pct>=.4?1:0;const k=L.iso+'|'+L.s;const prev=S.done[k];
+ const r={sc:Math.round(pct*100),st,sec,at:Date.now(),n:L.qs.length,right:lesson.score};if(!prev||prev.sc<=r.sc)S.done[k]=r;addTime(sec);save();view={name:'result',r,L};lesson=null;render()}
+function resultHTML(){const {r,L}=view;const msg=r.st===3?'Блестяще! Ты всё знаешь.':r.st===2?'Хорошая работа! Ещё чуть-чуть — и будет идеально.':r.st===1?'Неплохо! Давай повторим правило ещё раз.':'Ничего страшного. Разберём ошибки вместе с мамой или папой и попробуем снова.';
+ return `<div class="result s-${L.s}"><span class="eyebrow">${esc(L.title)} · ${esc(L.topic)}</span><div class="bigstars" aria-label="${r.st} из 3 звёзд">${starStr(r.st)}</div><h1>${r.st>=2?'Молодец, '+esc(S.name)+'!':'Урок закончен'}</h1><p class="sub">Правильно ${String(r.right).replace('.',',')} из ${r.n} · ${Math.max(1,Math.round(r.sec/60))} мин</p><p>${msg}</p><div class="row" style="justify-content:center"><button class="cta" style="width:auto;padding:14px 28px" data-act="back">К урокам</button>${r.st<3?`<button class="ghost" data-start="${L.iso}|${L.s}">Пройти ещё раз</button>`:''}</div></div>`}
+function limitHTML(){return `<div class="result"><div class="bigstars">☾</div><h1>На сегодня хватит!</h1><p class="sub">Ты занималась ${Math.round(usedSec()/60)} минут. Глазкам и голове нужен отдых.</p><p>Завтра будут новые интересные задания.</p><div class="row" style="justify-content:center"><button class="cta" style="width:auto;padding:14px 28px" data-act="back">Хорошо</button><button class="ghost" data-act="extra">Ота-она: яна 15 дақиқа</button></div></div>`}
+
+/* ---------- План ---------- */
+function monthStats(y,m){let tot=0,dn=0;const n=new Date(y,m+1,0).getDate();for(let k=1;k<=n;k++){const ds=iso(new Date(y,m,k));const p=planFor(ds);tot+=p.length;dn+=p.filter(s=>rec(ds,s)).length}return [dn,tot]}
+function planHTML(){const cur=ctxOf(new Date(),S.base);const g=planG||Math.min(4,Math.max(1,cur.grade));const sy=2026+g-S.base;const t=today();
+ let h=`<header class="hero"><span class="eyebrow">Программа на ${sy}–${sy+1} учебный год</span><h1>${g} класс</h1><p class="sub">Каждый месяц — новая тема. Нажми на месяц, чтобы открыть дни.</p></header>
+ <div class="chips" role="tablist" style="margin-bottom:16px">${[1,2,3,4].map(x=>`<button class="chip ${x===g?'on':''}" data-grade="${x}" role="tab" aria-selected="${x===g}">${x} класс</button>`).join('')}</div><div class="list">`;
+ for(let mi=0;mi<12;mi++){const y=sy+(mi>=4?1:0),m=(mi+8)%12;const d1=new Date(y,m,1);const c=ctxOf(d1,S.base);const cfg=mathCfgs(c.g,c.mi,c.exam);const [dn,tot]=monthStats(y,m);const key=y+'-'+m;const open=openM.has(key);
+  h+=`<div class="month"><button class="mhead" data-month="${key}" aria-expanded="${open}"><span class="mname">${MONTHS[mi]} ${y}</span><span class="mprog">${dn}/${tot} ${open?'▴':'▾'}</span><span class="mtop">Математика: ${esc(cfg.cur.t)}<br>English: ${esc(engTopic(c.g,c.mi,c.exam))}</span></button>`;
+  if(open){h+=`<div class="cal">${['Пн','Вт','Ср','Чт','Пт','Сб'].map(w=>`<span class="wd">${w}</span>`).join('')}`;const n=new Date(y,m+1,0).getDate();let first=true;
+   for(let k=1;k<=n;k++){const d=new Date(y,m,k),w=d.getDay();if(w===0)continue;if(first){for(let b=1;b<w;b++)h+='<span></span>';first=false}const ds=iso(d);const p=planFor(ds);const dd=p.filter(s=>rec(ds,s)).length;const cls=[p.length&&dd===p.length?'full':dd?'part':ds<t&&p.length&&(!S.started||ds>=S.started)?'miss':'',ds===t?'today':'',w===6?'sat':''].join(' ');
+    h+=`<button class="${cls}" data-day="${ds}" aria-label="${k} ${MON_GEN[m]}: выполнено ${dd} из ${p.length}">${k}</button>`}
+   h+=`</div>`}
+  h+=`</div>`}
+ return h+`</div>`}
+
+/* ---------- Успехи ---------- */
+function statsHTML(){const recs=Object.entries(S.done);const stars=recs.reduce((a,[,r])=>a+r.st,0);const mins=Math.round(Object.values(S.time).reduce((a,b)=>a+b,0)/60);
+ let streak=0;for(let k=0;k<400;k++){const d=new Date();d.setDate(d.getDate()-k);const ds=iso(d);const has=recs.some(([kk])=>kk.startsWith(ds));if(has)streak++;else if(k===0||d.getDay()===0)continue;else break}
+ let h=`<header class="hero"><span class="eyebrow">Дневник успехов</span><h1>${esc(S.name)}</h1><p class="sub">Звёзды за уроки, минуты занятий и любимые предметы.</p></header>
+ <div class="kpis"><div class="kpi"><b>${stars}</b><span>звёзд</span></div><div class="kpi"><b>${recs.length}</b><span>${pl(recs.length,['урок','урока','уроков'])}</span></div><div class="kpi"><b>${streak}</b><span>${pl(streak,['день','дня','дней'])} подряд</span></div></div>`;
+ const days=[];for(let k=13;k>=0;k--){const d=new Date();d.setDate(d.getDate()-k);days.push(d)}const mx=Math.max(60,...days.map(d=>(S.time[iso(d)]||0)/60));
+ h+=`<section class="section"><span class="label">Минуты за 14 дней · всего ${mins} мин</span><div class="bars"><div class="cols">${days.map(d=>{const v=(S.time[iso(d)]||0)/60;return `<i style="height:${v/mx*100}%" title="${Math.round(v)} мин"></i>`}).join('')}</div><div class="lab">${days.map(d=>`<span>${d.getDate()}</span>`).join('')}</div></div></section>`;
+ h+=`<section class="section"><span class="label">По предметам</span>`;for(const s of ['math','eng','logic','read','test']){const rs=recs.filter(([k])=>k.endsWith('|'+s)).map(([,r])=>r);const avg=rs.length?Math.round(rs.reduce((a,r)=>a+r.sc,0)/rs.length):0;
+  h+=`<div class="subj s-${s}"><span class="badge" aria-hidden="true">${SUBJ[s].ic}</span><div><b>${SUBJ[s].n}</b><div class="meter"><i style="width:${avg}%"></i></div></div><small>${rs.length?avg+'% · '+rs.length+' ур.':'пока нет'}</small></div>`}
+ h+=`</section>`;const last=recs.sort((a,b)=>b[1].at-a[1].at).slice(0,6);
+ if(last.length)h+=`<section class="section"><span class="label">Последние уроки</span><div class="tbl"><table><thead><tr><th>Дата</th><th>Урок</th><th>Итог</th></tr></thead><tbody>${last.map(([k,r])=>{const [ds,s]=k.split('|');const d=parseD(ds);return `<tr><td>${d.getDate()} ${MON_GEN[d.getMonth()]}</td><td>${SUBJ[s].n}</td><td><span class="stars">${starStr(r.st)}</span> ${r.sc}%</td></tr>`}).join('')}</tbody></table></div></section>`;
+ else h+=`<div class="note" style="margin-top:20px"><p>Здесь появятся звёзды после первого урока.</p></div>`;
+ return h}
+
+/* ---------- Родителям (на узбекском) ---------- */
+function parentHTML(){const c=ctxOf(new Date(),S.base);const g=Math.min(4,Math.max(1,c.grade));
+ let h=`<header class="hero"><span class="eyebrow">Ота-оналар учун</span><h1>Созламалар</h1><p class="sub">Дастур 1–4-синф ва Президент мактабига кириш имтиҳонигача кунма-кун тузилган.</p></header>
+ <div class="form"><label for="f-name">Боланинг исми<input id="f-name" value="${esc(S.name)}" maxlength="20"></label>
+ <label for="f-base">2026–2027 ўқув йилида нечанчи синфда?<select id="f-base">${[1,2,3,4].map(x=>`<option value="${x}" ${x===S.base?'selected':''}>${x}-синф</option>`).join('')}</select></label>
+ <label for="f-lim">Кунлик вақт чеклови<select id="f-lim">${[30,45,60].map(x=>`<option value="${x}" ${x===S.limit?'selected':''}>${x} дақиқа</option>`).join('')}</select></label>
+ <div class="row"><button class="next" data-act="save">Сақлаш</button><button class="ghost" data-act="extra">Бугун яна 15 дақиқа</button></div><span class="muted" id="saved" style="font-size:14px"></span></div>
+ <section class="section"><span class="label">Президент мактаби имтиҳони</span><div class="info"><p>Президент мактабларига <b>5-синфга</b> қабул қилинади. <b>1-босқич</b> — математика. <b>2-босқич</b> — мантиқий фикрлаш ва инглиз тили.</p><p>Шунинг учун дастурда математика ҳар куни бор, мантиқ ва инглиз тили ҳафтасига 4–5 марта. Рус тили мактабдаги ўқиш учун.</p><p class="muted" style="font-size:14px">Қабул шартлари ҳар йили янгиланиши мумкин — ихтисослаштирилган таълим агентлигининг 1206 call-марказидан аниқлаштиринг.</p></div></section>
+ <section class="section"><span class="label">Ҳафталик жадвал (${g}-синф)</span><div class="tbl"><table><thead><tr><th>Кун</th><th>Дарслар</th><th>Вақт</th></tr></thead><tbody>${[1,2,3,4,5,6,0].map(w=>{const p=weekPlan(g,c.exam,w);const uzd=['Якшанба','Душанба','Сешанба','Чоршанба','Пайшанба','Жума','Шанба'][w];return `<tr><td>${uzd}</td><td>${p.length?p.map(s=>SUBJ[s].n).join(', '):'Дам олиш'}</td><td>${p.reduce((a,s)=>a+minutes(s,g),0)||'—'}${p.length?' дақ.':''}</td></tr>`}).join('')}</tbody></table></div><p class="muted" style="margin:0;font-size:14px">Шанба — ҳафталик текширув, ойнинг охирги шанбаси — ойлик назорат иши.</p></section>
+ <section class="section"><span class="label">${g}-синф дастури ойма-ой</span><div class="tbl"><table><thead><tr><th>Ой</th><th>Математика</th><th>Инглиз тили</th></tr></thead><tbody>${MATH[g].map((m,i)=>`<tr><td>${MONTHS[i]}</td><td>${esc(m.t)}</td><td>${esc(ENG[g][i].t)}</td></tr>`).join('')}<tr><td>Июнь–Август</td><td>Ёзги такрорлаш${g===4?' ва пробный имтиҳонлар':''}</td><td>${g===4?'Exam practice':'Summer review'}</td></tr></tbody></table></div></section>
+ <section class="section"><span class="label">Маълумотлар</span>${confirmReset?`<div class="confirm"><p style="margin:0">Барча юлдузлар ва натижалар ўчирилсинми? Буни қайтариб бўлмайди.</p><div class="row"><button class="next" style="background:var(--bad)" data-act="reset-yes">Ҳа, ўчириш</button><button class="ghost" data-act="reset-no">Бекор қилиш</button></div></div>`:`<div class="row"><button class="ghost" data-act="reset">Натижаларни тозалаш</button></div>`}<p class="muted" style="margin:0;font-size:14px">Натижалар фақат шу телефонда сақланади.</p></section>`;
+ return h}
+
+/* ---------- Отрисовка и события ---------- */
+function render(){const tabs=document.getElementById('tabs');const inL=view.name==='lesson';tabs.classList.toggle('hide',inL);
+ const tn=view.name==='day'?'day':view.name==='plan'?'plan':view.name==='stats'?'stats':view.name==='parent'?'parent':'';tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tn));
+ if(view.name==='day')V.innerHTML=dayHTML(view.date);else if(view.name==='lesson')V.innerHTML=lesson.i<0?ruleHTML():qHTML();else if(view.name==='result')V.innerHTML=resultHTML();else if(view.name==='limit')V.innerHTML=limitHTML();else if(view.name==='plan')V.innerHTML=planHTML();else if(view.name==='stats')V.innerHTML=statsHTML();else V.innerHTML=parentHTML()}
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const D=b.dataset;
+ if(D.tab){view=D.tab==='day'?{name:'day',date:today()}:{name:D.tab};confirmReset=false;render();window.scrollTo(0,0);return}
+ if(D.start){const [ds,s]=D.start.split('|');startLesson(ds,s);window.scrollTo(0,0);return}
+ if(D.day){view={name:'day',date:D.day};render();window.scrollTo(0,0);return}
+ if(D.grade){planG=+D.grade;render();return}
+ if(D.month){openM.has(D.month)?openM.delete(D.month):openM.add(D.month);render();return}
+ if(D.say){speak(D.say);return}
+ if(D.key&&lesson&&!lesson.locked){if(D.key==='back')lesson.input=lesson.input.slice(0,-1);else if(D.key==='ok'){if(lesson.input)check(lesson.input);return}else if(lesson.input.length<7)lesson.input=(lesson.input==='0'?'':lesson.input)+D.key;const a=document.getElementById('ans');if(a){a.textContent=lesson.input||'?';a.classList.toggle('empty',!lesson.input)}return}
+ if(D.opt&&lesson&&!lesson.locked){check(+D.opt);return}
+ const A=D.act;if(!A)return;
+ if(A==='begin'){lesson.i=0;lesson.t0=Date.now();render()}
+ else if(A==='next')nextQ();
+ else if(A==='quit'){confirmQuit=true;render()}
+ else if(A==='quit-no'){confirmQuit=false;render()}
+ else if(A==='quit-yes'){if(lesson&&lesson.i>=0)addTime(Math.min(3600,Math.round((Date.now()-lesson.t0)/1000)));save();const ds=lesson?lesson.L.iso:today();lesson=null;confirmQuit=false;view={name:'day',date:ds};render()}
+ else if(A==='back'){view={name:'day',date:view.L?view.L.iso:today()};render()}
+ else if(A==='today'){view={name:'day',date:today()};render()}
+ else if(A==='extra'){const t=today();S.extra[t]=(S.extra[t]||0)+15;save();if(view.name==='limit')view={name:'day',date:t};render();const sv=document.getElementById('saved');if(sv)sv.textContent='Бугунги чеклов 15 дақиқага узайтирилди.'}
+ else if(A==='save'){const n=document.getElementById('f-name').value.trim();S.name=n||'Садия';S.base=+document.getElementById('f-base').value;S.limit=+document.getElementById('f-lim').value;save();render();const sv=document.getElementById('saved');if(sv)sv.textContent='Сақланди.'}
+ else if(A==='reset'){confirmReset=true;render()}
+ else if(A==='reset-no'){confirmReset=false;render()}
+ else if(A==='reset-yes'){S.done={};S.time={};S.extra={};confirmReset=false;save();render()}
+});
+document.addEventListener('keydown',e=>{if(!lesson||lesson.i<0||view.name!=='lesson')return;const q=lesson.L.qs[lesson.i];if(lesson.locked){if(e.key==='Enter')nextQ();return}if(q.k==='num'){if(/^\d$/.test(e.key)&&lesson.input.length<7){lesson.input=(lesson.input==='0'?'':lesson.input)+e.key}else if(e.key==='Backspace')lesson.input=lesson.input.slice(0,-1);else if(e.key==='Enter'&&lesson.input){check(lesson.input);return}else return;const a=document.getElementById('ans');if(a){a.textContent=lesson.input||'?';a.classList.toggle('empty',!lesson.input)}}});
+if('speechSynthesis' in window){try{speechSynthesis.getVoices()}catch(e){}}
+if(!S.started){S.started=today();save()}
+render();
+</script>
+
+</body>
+</html>
