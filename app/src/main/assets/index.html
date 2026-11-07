@@ -15,18 +15,18 @@
 :root{
  --paper:#F7F9FC;--grid:#E3EAF4;--text:#1A2233;--muted:#5A6479;--ink:#2350B8;--margin:#E05A4F;
  --card:#FFFFFF;--line:#D6DEEA;--sun:#E9A800;--ok:#178A54;--okbg:#E3F5EA;--bad:#C8461C;--badbg:#FDEBE3;
- --math:#2459C9;--eng:#0B8A7A;--logic:#8A3FC0;--read:#C9571A;--test:#A87400;
+ --math:#2459C9;--eng:#0B8A7A;--logic:#8A3FC0;--read:#C9571A;--test:#A87400;--oly:#B4235A;
  --display:'Pangolin','Comic Sans MS','Chalkboard SE',ui-rounded,system-ui,sans-serif;
  --body:'Golos Text',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
  --paper:#14201B;--grid:#1C2B24;--text:#E7EFEA;--muted:#9DB0A6;--ink:#8DB4FF;--margin:#F08A7E;
  --card:#1B2A23;--line:#2C3F36;--sun:#F6C744;--ok:#4CD68A;--okbg:#173A2A;--bad:#FF9A6B;--badbg:#3D2219;
- --math:#86A9FF;--eng:#3FD1C0;--logic:#CE9BFF;--read:#FFA567;--test:#E8C24F;color-scheme:dark}}
+ --math:#86A9FF;--eng:#3FD1C0;--logic:#CE9BFF;--read:#FFA567;--test:#E8C24F;--oly:#FF7FAE;color-scheme:dark}}
 :root[data-theme="dark"]{
  --paper:#14201B;--grid:#1C2B24;--text:#E7EFEA;--muted:#9DB0A6;--ink:#8DB4FF;--margin:#F08A7E;
  --card:#1B2A23;--line:#2C3F36;--sun:#F6C744;--ok:#4CD68A;--okbg:#173A2A;--bad:#FF9A6B;--badbg:#3D2219;
- --math:#86A9FF;--eng:#3FD1C0;--logic:#CE9BFF;--read:#FFA567;--test:#E8C24F;color-scheme:dark}
+ --math:#86A9FF;--eng:#3FD1C0;--logic:#CE9BFF;--read:#FFA567;--test:#E8C24F;--oly:#FF7FAE;color-scheme:dark}
 *{box-sizing:border-box}
 html,body{min-height:100%}
 body{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;color:var(--text);font:16px/1.5 var(--body);-webkit-tap-highlight-color:transparent}
@@ -34,7 +34,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .wrap{max-width:580px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 112px}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.s-math{--c:var(--math)}.s-eng{--c:var(--eng)}.s-logic{--c:var(--logic)}.s-read{--c:var(--read)}.s-test{--c:var(--test)}
+.s-math{--c:var(--math)}.s-eng{--c:var(--eng)}.s-logic{--c:var(--logic)}.s-read{--c:var(--read)}.s-test{--c:var(--test)}.s-oly{--c:var(--oly)}
 
 /* Шапка дня */
 .hero{border-left:2px solid var(--margin);padding:4px 0 4px 14px;margin:4px 0 22px;display:grid;gap:4px}
@@ -82,6 +82,7 @@ h2{font:400 24px/1.2 var(--display);color:var(--ink);margin:0;text-wrap:balance}
 .big{font:400 38px/1.25 var(--display);text-align:center;color:var(--text);font-variant-numeric:tabular-nums;overflow-wrap:anywhere;padding:6px 0}
 .big.long{font-size:26px}
 .big.pre{white-space:pre-line;font-size:24px;text-align:left;line-height:1.6;font-family:var(--body);font-weight:500}
+.big.para{font:500 21px/1.5 var(--body);text-align:left}
 .big.emo{font-size:44px;line-height:1.3}
 .sayrow{display:flex;justify-content:center}
 .say{border:1px solid var(--line);background:var(--paper);border-radius:24px;padding:8px 16px;font-size:16px}
@@ -451,16 +452,44 @@ function engQ(R,type,P,all){const W=P.w;
  const t=R.pick(P.tx),q=R.pick(t.q);return mc(R,q[0],'',q[1],q[2],{passage:t.t,ptitle:'Read the text'})}
 const EGEN={1:['pic','word','listen','letter','pic','listen','word','pic'],2:['pic','word','ru2en','en2ru','sent','listen','sent','pic'],3:['sent','sent','sent','ru2en','en2ru','pic','sent','word'],4:['sent','sent','text','sent','ru2en','en2ru','text','sent']};
 
+
+/* ---------- Олимпиадные задачи по классам ---------- */
+const YRS=['год','года','лет'],OT='Олимпиадная задача',GIRLS=NM.filter(x=>x.f);
+const OLY={
+ family:(R)=>{const P=R.pick(GIRLS),b=R.int(1,4),s=R.int(1,3);return num(OT,`У ${P.g} ${b} ${pl(b,['брат','брата','братьев'])} и ${s} ${pl(s,['сестра','сестры','сестёр'])}. Сколько детей в семье?`,b+s+1)},
+ queue:(R)=>{const P=R.pick(GIRLS),a=R.int(2,9),b=R.int(2,9);return num(OT,`В очереди ${P.n} стоит ${a}-я спереди и ${b}-я сзади. Сколько человек в очереди?`,a+b-1)},
+ age:(R)=>{const s=R.int(5,8),dd=R.int(2,5),k=R.int(2,5);return num(OT,`Садии ${s} ${pl(s,YRS)}, а брат старше её на ${dd} ${pl(dd,YRS)}. Сколько лет будет брату, когда Садии исполнится ${s+k}?`,s+dd+k)},
+ cut:(R)=>{const a=R.int(2,4),b=R.int(2,3);return num(OT,`Пирог разрезали на ${a} ${pl(a,['часть','части','частей'])}, а потом каждую часть ещё на ${b} ${pl(b,['кусок','куска','кусков'])}. Сколько всего получилось кусков?`,a*b)},
+ same:(R)=>{const x=R.int(2,9),n=R.int(2,4);return num(OT,`Сложили ${n} одинаковых числа и получили ${x*n}. Какое это число?`,x)},
+ think:(R,L)=>{if(L<=2){const x=R.int(2,15),a=R.int(2,9);return R.chance(.5)?num(OT,`Садия задумала число, прибавила к нему ${a} и получила ${x+a}. Какое число она задумала?`,x):num(OT,`Садия задумала число, отняла от него ${a} и получила ${x}. Какое число она задумала?`,x+a)}
+  const x=R.int(2,12),m=R.int(2,5),a=R.int(1,9);return num(OT,`Садия задумала число, умножила его на ${m} и прибавила ${a}. Получилось ${x*m+a}. Какое число она задумала?`,x)},
+ sumdiff:(R,L)=>{const x=R.int(2,L<=1?6:20),dd=R.int(1,L<=1?4:10),P=R.pick(GIRLS),t=2*x+dd;return num(OT,`У ${P.g} и её брата вместе ${t} ${pl(t,['конфета','конфеты','конфет'])}. У ${P.g} на ${dd} больше, чем у брата. Сколько конфет у брата?`,x)},
+ share:(R)=>{const k=R.int(1,4),h=R.int(k+2,9),T=2*h;return num(OT,`Мальчик и девочка собрали вместе ${T} ${pl(T,['гриб','гриба','грибов'])}. Если мальчик отдаст девочке ${k}, грибов у них станет поровну. Сколько грибов собрал мальчик?`,h+k)},
+ digits:(R)=>{const dg=R.int(1,9),hi=R.pick([20,30,50]);let c=0;for(let i=1;i<=hi;i++)for(const ch of String(i))if(ch===String(dg))c++;return num(OT,`Сколько раз цифра ${dg} встречается, если записать подряд все числа от 1 до ${hi}?`,c)},
+ pairs:(R)=>{const n=R.int(3,6);return num(OT,`В кружок ходят ${n} ${pl(n,['ученик','ученика','учеников'])}. Учитель выбирает двоих дежурных. Сколько разных пар можно составить?`,n*(n-1)/2)},
+ timeD:(R)=>{const h=R.int(7,10),m=R.pick([0,15,30,45]),dur=R.pick([45,75,90,105,120]);const e=h*60+m+dur;const f=(x)=>Math.floor(x/60)+':'+String(x%60).padStart(2,'0');return num(OT,`Кружок начался в ${f(h*60+m)} и закончился в ${f(e)}. Сколько минут длилось занятие?`,dur)},
+ div:(R)=>{const k=R.pick([3,4,5,9,11,25]);let c=0;for(let i=10;i<100;i++)if(i%k===0)c++;return num(OT,`Сколько двузначных чисел делится на ${k} без остатка?`,c)},
+ minnum:(R)=>{const s=R.int(2,12);let ans=0;for(let i=100;i<1000;i++){if(Math.floor(i/100)+Math.floor(i/10)%10+i%10===s){ans=i;break}}return num(OT,`Найди самое маленькое трёхзначное число, у которого сумма цифр равна ${s}.`,ans)},
+ legsKids:(R)=>{const k=R.int(2,5),dd=R.int(1,3);return num(OT,`Во дворе гуляют ${k} ${pl(k,['мальчик','мальчика','мальчиков'])} и ${dd} ${pl(dd,['собака','собаки','собак'])}. Сколько всего ног во дворе?`,2*k+4*dd)},
+ brick:()=>num(OT,'Кирпич весит 1 кг и ещё половину кирпича. Сколько килограммов весит кирпич?',2),
+ trick:(R,L)=>LG.trick(R,L),
+ olympM:(R)=>MG.olymp(R)
+};
+const OGEN={1:['family','queue','age','cut','same','think','sumdiff','legsKids'],2:['family','queue','age','cut','think','sumdiff','share','digits','legsKids'],3:['queue','think','sumdiff','share','digits','pairs','timeD','olympM','brick','trick'],4:['think','sumdiff','share','digits','pairs','timeD','div','minnum','olympM','brick','trick']};
+const ORULE='Олимпиадные задачи — с хитринкой. Прочитай условие два раза, нарисуй картинку или схему. Не спеши: часто ответ не такой, каким кажется сначала.';
+function olyQ(R,L){return OLY[R.pick(OGEN[L])](R,L)}
 /* ---------- Расписание и сборка урока ---------- */
-const SUBJ={math:{n:'Математика',ic:'+'},eng:{n:'English',ic:'Aa'},logic:{n:'Логика',ic:'?'},read:{n:'Русский язык',ic:'Б'},test:{n:'Проверочная',ic:'★'}};
-function weekPlan(g,exam,w){if(w===0)return[];if(w===6)return['test'];if(exam)return w%2?['math','logic','eng']:['math','eng','logic'];
- if(g<=2)return {1:['math','eng','logic'],2:['math','read','eng'],3:['math','eng','logic'],4:['math','read','logic'],5:['math','eng','logic']}[w];
- return {1:['math','eng','logic'],2:['math','read','eng'],3:['math','eng','logic'],4:['math','eng','logic'],5:['math','read','logic']}[w]}
+const SUBJ={math:{n:'Математика',ic:'+'},eng:{n:'English',ic:'Aa'},logic:{n:'Логика',ic:'?'},read:{n:'Русский язык',ic:'Б'},test:{n:'Проверочная',ic:'★'},oly:{n:'Олимпиада',ic:'∑'}};
+function weekPlan(g,exam,w){if(w===0)return[];if(w===6)return['test'];if(exam)return w===5?['math','oly','eng']:w%2?['math','logic','eng']:['math','eng','logic'];
+ if(g<=2)return {1:['math','eng','logic'],2:['math','read','eng'],3:['math','eng','logic'],4:['math','read','logic'],5:['math','eng','oly']}[w];
+ return {1:['math','eng','logic'],2:['math','read','eng'],3:['math','eng','logic'],4:['math','eng','logic'],5:['math','read','oly']}[w]}
 function minutes(s,g){return s==='math'?(g<=2?20:25):s==='test'?30:15}
 function ctxOf(d,base){const y=d.getFullYear(),m=d.getMonth(),sy=m>=8?y:y-1,grade=base+(sy-2026),mi=(m-8+12)%12;const g=Math.min(4,Math.max(1,grade));return {grade,g,mi,sy,exam:grade>4||(grade===4&&mi>8),out:grade<1}}
 function mathCfgs(g,mi,exam){if(exam)return {cur:MATH[4][8],list:[MATH[4][8],MATH[4][7],MATH[4][5],MATH[3][7]]};if(mi>8)return {cur:{t:'Летнее повторение',rule:'Летом повторяем всё, что прошли за год. По 20 минут в день — и в новом классе будет легко.'},list:MATH[g]};return {cur:MATH[g][mi],list:[MATH[g][mi]],prev:mi>0?MATH[g][mi-1]:(g>1?MATH[g-1][8]:null)}}
+const MOFF=[0,3,9];
+function mathCfgL(g,mi,exam,lvl){if(exam||!lvl)return mathCfgs(g,mi,exam);const base=(g-1)*9+(mi>8?9:mi);const idx=base+MOFF[lvl];if(idx>35)return mathCfgs(4,8,true);const eg=Math.floor(idx/9)+1,em=idx%9,p=idx-1;return {cur:MATH[eg][em],list:[MATH[eg][em]],prev:MATH[Math.floor(p/9)+1][p%9]}}
 function pickGen(R,c){const src=(c.prev&&R.chance(.2))?c.prev:R.pick(c.list);return R.pick(src.g)}
-function mathQ(R,c){const [k,p]=pickGen(R,c);return MG[k](R,p)}
+function mathQ(R,c,oL){if(oL&&R.chance(.2))return olyQ(R,oL);const [k,p]=pickGen(R,c);return MG[k](R,p)}
 function engQq(R,g,mi,exam){const gg=exam?4:g,mm=exam?8:mi;const P=engPool(gg,mm);let all=P.w.slice();if(all.length<8)all=all.concat(ENG[gg].flatMap(m=>m.w));if(all.length<8&&gg>1)all=all.concat(ENG[gg-1].flatMap(m=>m.w));let type=R.pick(EGEN[gg]);
  if(!exam&&mi<=8&&R.chance(.25)&&(mi>0||gg>1)){const pm=mi>0?mi-1:8,pg=mi>0?gg:gg-1;const PP=engPool(pg,pm);if(PP.w.length>=4||PP.s.length)return engQ(R,type,PP,all.concat(PP.w))}
  return engQ(R,type,P,all)}
@@ -468,22 +497,23 @@ function logicQ(R,g){return LG[R.pick(LGEN[g])](R,g)}
 function readQ(R,g){return RG[R.pick(RGEN[g])](R,g)}
 function engTopic(g,mi,exam){if(exam)return 'Exam practice';if(mi>8)return 'Summer review';return ENG[g][mi].t}
 function lastSat(d){return d.getDay()===6&&d.getDate()+7>new Date(d.getFullYear(),d.getMonth()+1,0).getDate()}
-function buildLesson(iso,s,base){const [y,m,dd]=iso.split('-').map(Number);const d=new Date(y,m-1,dd);const c=ctxOf(d,base);const R=RNG(iso+'|'+s+'|'+base);const g=c.g,mi=c.mi;const mc_=mathCfgs(g,mi,c.exam);const qs=[];const seen=new Set();
+function buildLesson(iso,s,base,lvl){lvl=lvl||0;const [y,m,dd]=iso.split('-').map(Number);const d=new Date(y,m-1,dd);const c=ctxOf(d,base);const R=RNG(iso+'|'+s+'|'+base+(lvl?'|L'+lvl:''));const g=c.g,mi=c.mi;const mc_=mathCfgL(g,mi,c.exam,lvl);const LG_=c.exam?4:Math.min(4,g+lvl),RG_=Math.min(4,g+(lvl?1:0));const qs=[];const seen=new Set();
  const add=(fn)=>{for(let t=0;t<12;t++){const q=fn();const key=q.q+'|'+q.big+'|'+(q.passage||'');if(!seen.has(key)){seen.add(key);qs.push(q);return}}qs.push(fn())};
  let title,topic,rule;
- if(s==='math'){const n=g<=2?10:12;for(let i=0;i<n;i++)add(()=>mathQ(R,mc_));title='Математика';topic=mc_.cur.t;rule=mc_.cur.rule}
+ if(s==='math'){const n=g<=2?10:12;for(let i=0;i<n;i++)add(()=>mathQ(R,mc_,lvl>=2?LG_:0));title='Математика';topic=mc_.cur.t;rule=mc_.cur.rule}
  else if(s==='eng'){for(let i=0;i<8;i++)add(()=>engQq(R,g,mi,c.exam));title='English';topic=engTopic(g,mi,c.exam);rule=c.exam?ENG[4][8].rule:mi>8?'Летом повторяем английские слова и правила всего года.':ENG[g][mi].rule}
- else if(s==='logic'){const L=c.exam?4:g;for(let i=0;i<6;i++)add(()=>logicQ(R,L));title='Логика';topic=c.exam?'Логика: задания экзамена':'Логика и смекалка';rule=LRULE[L]}
- else if(s==='read'){for(let i=0;i<6;i++)add(()=>readQ(R,g));title='Русский язык';topic='Чтение и письмо';rule=RRULE[g]}
- else{const big=lastSat(d);const n=(g<=2?15:20)+(big?5:0);const L=c.exam?4:g;for(let i=0;i<n;i++){const r=i%10;add(()=>c.exam?(r<5?mathQ(R,mc_):r<8?logicQ(R,L):engQq(R,g,mi,true)):(r<5?mathQ(R,mc_):r<7?engQq(R,g,mi,false):r<9?logicQ(R,L):readQ(R,g)))}
+ else if(s==='logic'){const L=LG_;for(let i=0;i<6;i++)add(()=>logicQ(R,L));title='Логика';topic=c.exam?'Логика: задания экзамена':'Логика и смекалка';rule=LRULE[L]}
+ else if(s==='oly'){const ks=R.shuffle(OGEN[LG_]);for(let i=0;i<6;i++){const k=ks[i%ks.length];add(()=>OLY[k](R,LG_))}title='Олимпиада';topic='Задачи с хитринкой';rule=ORULE}
+ else if(s==='read'){for(let i=0;i<6;i++)add(()=>readQ(R,RG_));title='Русский язык';topic='Чтение и письмо';rule=RRULE[RG_]}
+ else{const big=lastSat(d);const n=(g<=2?15:20)+(big?5:0);const L=LG_;for(let i=0;i<n;i++){const r=i%10;add(()=>c.exam?(r<5?mathQ(R,mc_):r<8?logicQ(R,L):engQq(R,g,mi,true)):(r<5?mathQ(R,mc_):r<7?engQq(R,g,mi,false):r<8?logicQ(R,L):r<9?olyQ(R,L):readQ(R,RG_)))}
   title=c.exam?'Пробный экзамен':big?'Контрольная за месяц':'Проверочная за неделю';topic=c.exam?'Математика, логика, английский':'Всё, что прошли';rule=c.exam?'Как на настоящем экзамене: сначала математика, потом логика и английский. Не торопись и проверяй себя.':'Проверим, что ты запомнила за '+(big?'месяц':'неделю')+'. Ошибки — это не страшно: мама или папа посмотрят их вместе с тобой.'}
  return {iso,s,title,topic,rule,mins:minutes(s,g),qs,grade:c.grade,g,mi,exam:c.exam}}
-if(typeof module!=='undefined')module.exports={buildLesson,ctxOf,weekPlan,MATH,ENG,mathCfgs,engTopic,MONTHS};
+if(typeof module!=='undefined')module.exports={buildLesson,ctxOf,weekPlan,MATH,ENG,mathCfgs,mathCfgL,engTopic,MONTHS};
 
 </script>
 <script>
 const STORE='sadiya-app-v1';
-let S=(()=>{const d={name:'Садия',base:1,limit:60,done:{},time:{},extra:{},started:null};try{const r=localStorage.getItem(STORE);if(r)return Object.assign(d,JSON.parse(r))}catch(e){}return d})();
+let S=(()=>{const d={name:'Садия',base:1,lvl:1,limit:60,done:{},time:{},extra:{},started:null};try{const r=localStorage.getItem(STORE);if(r)return Object.assign(d,JSON.parse(r))}catch(e){}return d})();
 function save(){try{localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}}
 const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const parseD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
@@ -501,7 +531,7 @@ function rec(ds,s){return S.done[ds+'|'+s]}
 function starStr(n){return '★'.repeat(n)+'☆'.repeat(3-n)}
 function usedSec(){return S.time[today()]||0}
 function limitSec(){return (S.limit+(S.extra[today()]||0))*60}
-function topicOf(ds,s){const d=parseD(ds),c=ctxOf(d,S.base);if(s==='math')return mathCfgs(c.g,c.mi,c.exam).cur.t;if(s==='eng')return engTopic(c.g,c.mi,c.exam);if(s==='logic')return c.exam?'Логика: задания экзамена':'Логика и смекалка';if(s==='read')return 'Чтение и письмо';return c.exam?'Математика, логика, английский':lastSat(d)?'Всё, что прошли за месяц':'Задания по всем предметам недели'}
+function topicOf(ds,s){const d=parseD(ds),c=ctxOf(d,S.base);if(s==='math')return mathCfgL(c.g,c.mi,c.exam,S.lvl).cur.t;if(s==='eng')return engTopic(c.g,c.mi,c.exam);if(s==='logic')return c.exam?'Логика: задания экзамена':'Логика и смекалка';if(s==='read')return 'Чтение и письмо';if(s==='oly')return 'Задачи с хитринкой';return c.exam?'Математика, логика, английский':lastSat(d)?'Всё, что прошли за месяц':'Задания по всем предметам недели'}
 function nameOf(s,ds){if(s==='test'){const d=parseD(ds),c=ctxOf(d,S.base);return c.exam?'Пробный экзамен':lastSat(d)?'Контрольная':'Проверочная'}return SUBJ[s].n}
 
 function tileHTML(ds,s){const d=parseD(ds),c=ctxOf(d,S.base),r=rec(ds,s);return `<button class="tile s-${s} ${r?'done':''}" data-start="${ds}|${s}">
@@ -511,7 +541,7 @@ function tileHTML(ds,s){const d=parseD(ds),c=ctxOf(d,S.base),r=rec(ds,s);return 
 
 function missedDays(){const out=[];const t=new Date();for(let k=1;k<=21&&out.length<6;k++){const d=new Date(t.getFullYear(),t.getMonth(),t.getDate()-k);const ds=iso(d);if(S.started&&ds<S.started)break;const p=planFor(ds);if(!p.length)continue;const left=p.filter(s=>!rec(ds,s)).length;if(left)out.push([ds,left,d])}return out}
 
-function dayHTML(ds){const d=parseD(ds),c=ctxOf(d,S.base),isT=ds===today();const p=c.out?[]:weekPlan(c.g,c.exam,d.getDay());const cfg=mathCfgs(c.g,c.mi,c.exam);
+function dayHTML(ds){const d=parseD(ds),c=ctxOf(d,S.base),isT=ds===today();const p=c.out?[]:weekPlan(c.g,c.exam,d.getDay());const cfg=mathCfgL(c.g,c.mi,c.exam,S.lvl);
  let h=`<header class="hero"><span class="eyebrow">${d.getDate()} ${MON_GEN[d.getMonth()]} ${d.getFullYear()} · ${WD[d.getDay()]}${isT?' · Классная работа':''}</span>
  <h1>${isT?`Привет, ${esc(S.name)}!`:`${d.getDate()} ${MON_GEN[d.getMonth()]}`}</h1>
  <p class="sub">${c.out?'Программа начнётся 1 сентября '+(2026+(1-S.base)):`${c.exam?'Подготовка к экзамену':c.grade+' класс'} · ${MONTHS[c.mi]} · ${esc(cfg.cur.t)}`}</p>`;
@@ -525,7 +555,7 @@ function dayHTML(ds){const d=parseD(ds),c=ctxOf(d,S.base),isT=ds===today();const
  return h}
 
 /* ---------- Урок ---------- */
-function startLesson(ds,s){if(usedSec()>=limitSec()){view={name:'limit'};render();return}const L=buildLesson(ds,s,S.base);lesson={L,i:-1,score:0,tries:0,input:'',t0:Date.now(),res:[],locked:false};confirmQuit=false;view={name:'lesson'};render()}
+function startLesson(ds,s){if(usedSec()>=limitSec()){view={name:'limit'};render();return}const L=buildLesson(ds,s,S.base,S.lvl);lesson={L,i:-1,score:0,tries:0,input:'',t0:Date.now(),res:[],locked:false};confirmQuit=false;view={name:'lesson'};render()}
 function qHTML(){const {L,i}=lesson,q=L.qs[i];const s=L.s;
  const dots=L.qs.map((_,j)=>`<i class="${j<i?(lesson.res[j]===1?'ok':lesson.res[j]===.5?'half':'no'):j===i?'now':''}"></i>`).join('');
  let h=`<div class="s-${s}"><header class="lbar"><button class="x" data-act="quit" aria-label="Выйти из урока">×</button><div class="dots" aria-hidden="true">${dots}</div><span class="lnum">${i+1}/${L.qs.length}</span></header>`;
@@ -534,7 +564,7 @@ function qHTML(){const {L,i}=lesson,q=L.qs[i];const s=L.s;
  if(q.passage)h+=`<div class="passage"><b>${esc(q.ptitle||'Прочитай текст')}</b>${esc(q.passage)}</div>`;
  h+=`<p class="qtext">${esc(q.q)}</p>`;
  if(q.listen){h+=canSpeak()?`<div class="listen"><button data-say="${esc(q.listen)}" aria-label="Послушать слово">🔊</button></div>`:`<div class="big">${esc(q.listen)}</div>`}
- else if(q.big){const long=String(q.big).length>26&&!q.pre&&!q.emo;h+=`<div class="big ${q.pre?'pre':''} ${q.emo?'emo':''} ${long?'long':''}">${esc(q.big)}</div>`}
+ else if(q.big){const bl=String(q.big).length,para=bl>60&&!q.pre&&!q.emo,long=bl>26&&!para&&!q.pre&&!q.emo;h+=`<div class="big ${q.pre?'pre':''} ${q.emo?'emo':''} ${long?'long':''} ${para?'para':''}">${esc(q.big)}</div>`}
  if(q.say&&canSpeak())h+=`<div class="sayrow"><button class="say" data-say="${esc(q.say)}">🔊 Послушать</button></div>`;
  if(q.k==='num'){h+=`<div class="answer ${lesson.input?'':'empty'}" id="ans" aria-live="polite">${lesson.input||'?'}</div>`;
   if(!lesson.locked)h+=`<div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-key="${n}">${n}</button>`).join('')}<button data-key="back" aria-label="Стереть">⌫</button><button data-key="0">0</button><button class="ok" data-key="ok">Проверить</button></div>`}
@@ -563,7 +593,7 @@ function monthStats(y,m){let tot=0,dn=0;const n=new Date(y,m+1,0).getDate();for(
 function planHTML(){const cur=ctxOf(new Date(),S.base);const g=planG||Math.min(4,Math.max(1,cur.grade));const sy=2026+g-S.base;const t=today();
  let h=`<header class="hero"><span class="eyebrow">Программа на ${sy}–${sy+1} учебный год</span><h1>${g} класс</h1><p class="sub">Каждый месяц — новая тема. Нажми на месяц, чтобы открыть дни.</p></header>
  <div class="chips" role="tablist" style="margin-bottom:16px">${[1,2,3,4].map(x=>`<button class="chip ${x===g?'on':''}" data-grade="${x}" role="tab" aria-selected="${x===g}">${x} класс</button>`).join('')}</div><div class="list">`;
- for(let mi=0;mi<12;mi++){const y=sy+(mi>=4?1:0),m=(mi+8)%12;const d1=new Date(y,m,1);const c=ctxOf(d1,S.base);const cfg=mathCfgs(c.g,c.mi,c.exam);const [dn,tot]=monthStats(y,m);const key=y+'-'+m;const open=openM.has(key);
+ for(let mi=0;mi<12;mi++){const y=sy+(mi>=4?1:0),m=(mi+8)%12;const d1=new Date(y,m,1);const c=ctxOf(d1,S.base);const cfg=mathCfgL(c.g,c.mi,c.exam,S.lvl);const [dn,tot]=monthStats(y,m);const key=y+'-'+m;const open=openM.has(key);
   h+=`<div class="month"><button class="mhead" data-month="${key}" aria-expanded="${open}"><span class="mname">${MONTHS[mi]} ${y}</span><span class="mprog">${dn}/${tot} ${open?'▴':'▾'}</span><span class="mtop">Математика: ${esc(cfg.cur.t)}<br>English: ${esc(engTopic(c.g,c.mi,c.exam))}</span></button>`;
   if(open){h+=`<div class="cal">${['Пн','Вт','Ср','Чт','Пт','Сб'].map(w=>`<span class="wd">${w}</span>`).join('')}`;const n=new Date(y,m+1,0).getDate();let first=true;
    for(let k=1;k<=n;k++){const d=new Date(y,m,k),w=d.getDay();if(w===0)continue;if(first){for(let b=1;b<w;b++)h+='<span></span>';first=false}const ds=iso(d);const p=planFor(ds);const dd=p.filter(s=>rec(ds,s)).length;const cls=[p.length&&dd===p.length?'full':dd?'part':ds<t&&p.length&&(!S.started||ds>=S.started)?'miss':'',ds===t?'today':'',w===6?'sat':''].join(' ');
@@ -579,7 +609,7 @@ function statsHTML(){const recs=Object.entries(S.done);const stars=recs.reduce((
  <div class="kpis"><div class="kpi"><b>${stars}</b><span>звёзд</span></div><div class="kpi"><b>${recs.length}</b><span>${pl(recs.length,['урок','урока','уроков'])}</span></div><div class="kpi"><b>${streak}</b><span>${pl(streak,['день','дня','дней'])} подряд</span></div></div>`;
  const days=[];for(let k=13;k>=0;k--){const d=new Date();d.setDate(d.getDate()-k);days.push(d)}const mx=Math.max(60,...days.map(d=>(S.time[iso(d)]||0)/60));
  h+=`<section class="section"><span class="label">Минуты за 14 дней · всего ${mins} мин</span><div class="bars"><div class="cols">${days.map(d=>{const v=(S.time[iso(d)]||0)/60;return `<i style="height:${v/mx*100}%" title="${Math.round(v)} мин"></i>`}).join('')}</div><div class="lab">${days.map(d=>`<span>${d.getDate()}</span>`).join('')}</div></div></section>`;
- h+=`<section class="section"><span class="label">По предметам</span>`;for(const s of ['math','eng','logic','read','test']){const rs=recs.filter(([k])=>k.endsWith('|'+s)).map(([,r])=>r);const avg=rs.length?Math.round(rs.reduce((a,r)=>a+r.sc,0)/rs.length):0;
+ h+=`<section class="section"><span class="label">По предметам</span>`;for(const s of ['math','eng','logic','oly','read','test']){const rs=recs.filter(([k])=>k.endsWith('|'+s)).map(([,r])=>r);const avg=rs.length?Math.round(rs.reduce((a,r)=>a+r.sc,0)/rs.length):0;
   h+=`<div class="subj s-${s}"><span class="badge" aria-hidden="true">${SUBJ[s].ic}</span><div><b>${SUBJ[s].n}</b><div class="meter"><i style="width:${avg}%"></i></div></div><small>${rs.length?avg+'% · '+rs.length+' ур.':'пока нет'}</small></div>`}
  h+=`</section>`;const last=recs.sort((a,b)=>b[1].at-a[1].at).slice(0,6);
  if(last.length)h+=`<section class="section"><span class="label">Последние уроки</span><div class="tbl"><table><thead><tr><th>Дата</th><th>Урок</th><th>Итог</th></tr></thead><tbody>${last.map(([k,r])=>{const [ds,s]=k.split('|');const d=parseD(ds);return `<tr><td>${d.getDate()} ${MON_GEN[d.getMonth()]}</td><td>${SUBJ[s].n}</td><td><span class="stars">${starStr(r.st)}</span> ${r.sc}%</td></tr>`}).join('')}</tbody></table></div></section>`;
@@ -591,11 +621,12 @@ function parentHTML(){const c=ctxOf(new Date(),S.base);const g=Math.min(4,Math.m
  let h=`<header class="hero"><span class="eyebrow">Ота-оналар учун</span><h1>Созламалар</h1><p class="sub">Дастур 1–4-синф ва Президент мактабига кириш имтиҳонигача кунма-кун тузилган.</p></header>
  <div class="form"><label for="f-name">Боланинг исми<input id="f-name" value="${esc(S.name)}" maxlength="20"></label>
  <label for="f-base">2026–2027 ўқув йилида нечанчи синфда?<select id="f-base">${[1,2,3,4].map(x=>`<option value="${x}" ${x===S.base?'selected':''}>${x}-синф</option>`).join('')}</select></label>
+ <label for="f-lvl">Қийинлик даражаси<select id="f-lvl">${[['0','Оддий — синф дастури бўйича'],['1','Кучли — математика 3 ой олдинда, мантиқ 1 синф юқори'],['2','Олимпиада — математика 1 йил олдинда, мантиқ 2 синф юқори']].map(([v,t])=>`<option value="${v}" ${+v===S.lvl?'selected':''}>${t}</option>`).join('')}</select></label>
  <label for="f-lim">Кунлик вақт чеклови<select id="f-lim">${[30,45,60].map(x=>`<option value="${x}" ${x===S.limit?'selected':''}>${x} дақиқа</option>`).join('')}</select></label>
  <div class="row"><button class="next" data-act="save">Сақлаш</button><button class="ghost" data-act="extra">Бугун яна 15 дақиқа</button></div><span class="muted" id="saved" style="font-size:14px"></span></div>
  <section class="section"><span class="label">Президент мактаби имтиҳони</span><div class="info"><p>Президент мактабларига <b>5-синфга</b> қабул қилинади. <b>1-босқич</b> — математика. <b>2-босқич</b> — мантиқий фикрлаш ва инглиз тили.</p><p>Шунинг учун дастурда математика ҳар куни бор, мантиқ ва инглиз тили ҳафтасига 4–5 марта. Рус тили мактабдаги ўқиш учун.</p><p class="muted" style="font-size:14px">Қабул шартлари ҳар йили янгиланиши мумкин — ихтисослаштирилган таълим агентлигининг 1206 call-марказидан аниқлаштиринг.</p></div></section>
  <section class="section"><span class="label">Ҳафталик жадвал (${g}-синф)</span><div class="tbl"><table><thead><tr><th>Кун</th><th>Дарслар</th><th>Вақт</th></tr></thead><tbody>${[1,2,3,4,5,6,0].map(w=>{const p=weekPlan(g,c.exam,w);const uzd=['Якшанба','Душанба','Сешанба','Чоршанба','Пайшанба','Жума','Шанба'][w];return `<tr><td>${uzd}</td><td>${p.length?p.map(s=>SUBJ[s].n).join(', '):'Дам олиш'}</td><td>${p.reduce((a,s)=>a+minutes(s,g),0)||'—'}${p.length?' дақ.':''}</td></tr>`}).join('')}</tbody></table></div><p class="muted" style="margin:0;font-size:14px">Шанба — ҳафталик текширув, ойнинг охирги шанбаси — ойлик назорат иши.</p></section>
- <section class="section"><span class="label">${g}-синф дастури ойма-ой</span><div class="tbl"><table><thead><tr><th>Ой</th><th>Математика</th><th>Инглиз тили</th></tr></thead><tbody>${MATH[g].map((m,i)=>`<tr><td>${MONTHS[i]}</td><td>${esc(m.t)}</td><td>${esc(ENG[g][i].t)}</td></tr>`).join('')}<tr><td>Июнь–Август</td><td>Ёзги такрорлаш${g===4?' ва пробный имтиҳонлар':''}</td><td>${g===4?'Exam practice':'Summer review'}</td></tr></tbody></table></div></section>
+ <section class="section"><span class="label">${g}-синф дастури ойма-ой</span><div class="tbl"><table><thead><tr><th>Ой</th><th>Математика</th><th>Инглиз тили</th></tr></thead><tbody>${MATH[g].map((m,i)=>`<tr><td>${MONTHS[i]}</td><td>${esc(mathCfgL(g,i,false,S.lvl).cur.t)}</td><td>${esc(ENG[g][i].t)}</td></tr>`).join('')}<tr><td>Июнь–Август</td><td>Ёзги такрорлаш${g===4?' ва пробный имтиҳонлар':''}</td><td>${g===4?'Exam practice':'Summer review'}</td></tr></tbody></table></div></section>
  <section class="section"><span class="label">Маълумотлар</span>${confirmReset?`<div class="confirm"><p style="margin:0">Барча юлдузлар ва натижалар ўчирилсинми? Буни қайтариб бўлмайди.</p><div class="row"><button class="next" style="background:var(--bad)" data-act="reset-yes">Ҳа, ўчириш</button><button class="ghost" data-act="reset-no">Бекор қилиш</button></div></div>`:`<div class="row"><button class="ghost" data-act="reset">Натижаларни тозалаш</button></div>`}<p class="muted" style="margin:0;font-size:14px">Натижалар фақат шу телефонда сақланади.</p></section>`;
  return h}
 
@@ -621,7 +652,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)r
  else if(A==='back'){view={name:'day',date:view.L?view.L.iso:today()};render()}
  else if(A==='today'){view={name:'day',date:today()};render()}
  else if(A==='extra'){const t=today();S.extra[t]=(S.extra[t]||0)+15;save();if(view.name==='limit')view={name:'day',date:t};render();const sv=document.getElementById('saved');if(sv)sv.textContent='Бугунги чеклов 15 дақиқага узайтирилди.'}
- else if(A==='save'){const n=document.getElementById('f-name').value.trim();S.name=n||'Садия';S.base=+document.getElementById('f-base').value;S.limit=+document.getElementById('f-lim').value;save();render();const sv=document.getElementById('saved');if(sv)sv.textContent='Сақланди.'}
+ else if(A==='save'){const n=document.getElementById('f-name').value.trim();S.name=n||'Садия';S.base=+document.getElementById('f-base').value;S.limit=+document.getElementById('f-lim').value;S.lvl=+document.getElementById('f-lvl').value;save();render();const sv=document.getElementById('saved');if(sv)sv.textContent='Сақланди.'}
  else if(A==='reset'){confirmReset=true;render()}
  else if(A==='reset-no'){confirmReset=false;render()}
  else if(A==='reset-yes'){S.done={};S.time={};S.extra={};confirmReset=false;save();render()}
